@@ -1,14 +1,15 @@
 'use client';
 // ============================================================
 // TopHeader - Thanh đầu trang
-// Hiển thị: Tiêu đề trang động, Avatar + Dropdown đăng xuất
+// Hiển thị: Tiêu đề trang động, Toggle Theme, Avatar + Dropdown đăng xuất
 // Theo AIGeneralCV_Specification.md § 3.1
 // ============================================================
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { LogOut, ChevronDown } from 'lucide-react';
+import { LogOut, ChevronDown, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { ROLE_LABELS } from '@/lib/constants';
 
 // Map pathname → tiêu đề trang
@@ -24,6 +25,7 @@ const PAGE_TITLES = {
 export default function TopHeader() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme, mounted } = useTheme();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const pageTitle = PAGE_TITLES[pathname] || 'Trang chủ';
@@ -35,7 +37,7 @@ export default function TopHeader() {
     <header
       style={{
         height: 'var(--header-height)',
-        background: 'var(--color-surface)',
+        background: 'var(--header-bg)',
         borderBottom: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
@@ -45,7 +47,7 @@ export default function TopHeader() {
         top: 0,
         zIndex: 40,
         backdropFilter: 'blur(12px)',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        transition: 'background-color 300ms ease, border-color 300ms ease',
       }}
     >
       {/* Left: Page Title */}
@@ -55,8 +57,44 @@ export default function TopHeader() {
         </h2>
       </div>
 
-      {/* Right: Avatar + Dropdown */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+      {/* Right: Theme Switcher + Avatar Dropdown */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        {/* Nút Toggle Dark / Light Theme */}
+        {mounted && (
+          <button
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Chuyển sang Giao diện Sáng' : 'Chuyển sang Giao diện Tối'}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 'var(--radius-full)',
+              border: '1px solid var(--color-border)',
+              background: 'var(--color-surface)',
+              color: theme === 'dark' ? '#FBBF24' : 'var(--color-text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 250ms cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: 'var(--shadow-sm)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.borderColor = 'var(--color-primary)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.borderColor = 'var(--color-border)';
+            }}
+          >
+            {theme === 'dark' ? (
+              <Sun size={20} style={{ transition: 'transform 300ms ease', transform: 'rotate(0deg)' }} />
+            ) : (
+              <Moon size={20} style={{ transition: 'transform 300ms ease', transform: 'rotate(-12deg)' }} />
+            )}
+          </button>
+        )}
+
         {/* User Avatar + Dropdown */}
         <div style={{ position: 'relative' }}>
           <button

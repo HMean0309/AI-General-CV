@@ -449,6 +449,48 @@ class TestCase12_AllProvidersFail:
 
 
 # ──────────────────────────────────────────────────────
+# EDGE CASE #13: JD Không liên quan (Dev Profile vs Helpdesk JD) → 200 (Score thấp/0)
+# ──────────────────────────────────────────────────────
+class TestCase13_UnrelatedJobDescription:
+    def test_unrelated_jd_returns_200_with_low_match(self, client):
+        """Unrelated JD (e.g. Helpdesk JD for Web Dev profile) should process with low match score."""
+        helpdesk_jd = (
+            "We are looking for an IT Helpdesk Support Technician. "
+            "Responsibilities include troubleshooting desktop hardware issues, "
+            "setting up Windows Server OS, configuring Active Directory, printer network setup, "
+            "crimping Ethernet network cables, and managing office IT equipment inventory. "
+            "Requires strong communication and hardware diagnostic skills."
+        )
+        # Web Dev coursework and projects
+        body = _make_full_request_body(
+            jd=helpdesk_jd,
+            major="Công nghệ phần mềm",
+            coursework=[
+                {"subject_name": "Lập trình Web", "score": 9.0},
+                {"subject_name": "Công nghệ phần mềm", "score": 8.5},
+            ],
+            projects=[
+                {
+                    "id": "p1",
+                    "name": "E-Commerce Website",
+                    "role": "Frontend Developer",
+                    "technologies": "React, TailwindCSS, Redux",
+                    "description": "Xây dựng giao diện web bán hàng online",
+                }
+            ],
+        )
+        response = client.post(
+            "/api/v1/generate-cv",
+            json=body,
+            headers=AUTH_HEADER,
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "matchScore" in data
+        assert "cvData" in data
+
+
+# ──────────────────────────────────────────────────────
 # Additional: Health Check
 # ──────────────────────────────────────────────────────
 class TestHealthCheck:
@@ -459,3 +501,4 @@ class TestHealthCheck:
         data = response.json()
         assert data["status"] == "healthy"
         assert "version" in data
+

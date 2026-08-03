@@ -429,12 +429,12 @@ export default function StudentProfilePage() {
             {/* Cột phải: AI Đề xuất + Thống kê nhanh */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
               {/* Khung AI Đề xuất */}
-              <div className="card" style={{ padding: 'var(--space-6)', border: '1px solid #EDE9FE', background: '#FAFAFE' }}>
+              <div className="card" style={{ padding: 'var(--space-6)', border: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-md)', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-md)', background: 'var(--color-primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Lightbulb size={16} style={{ color: 'var(--color-accent-ai)' }} />
                   </div>
-                  <h3 style={{ fontSize: '15px', fontWeight: 600 }}>AI Đề xuất</h3>
+                  <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-text-primary)' }}>AI Đề xuất</h3>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
                   <SuggestionItem text="Cập nhật ảnh chân dung chuyên nghiệp để tạo ấn tượng đầu tiên tốt hơn" />
@@ -445,9 +445,9 @@ export default function StudentProfilePage() {
 
               {/* Thống kê nhanh */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' }}>
-                <QuickStat label="Đồ án" value={projects.length} icon={<FolderGit2 size={18} />} color="#3B82F6" onClick={() => setActiveTab('projects')} />
-                <QuickStat label="Chứng chỉ" value={certificates.length} icon={<ShieldCheck size={18} />} color="#10B981" onClick={() => setActiveTab('certificates')} />
-                <QuickStat label="Môn học" value={examResults.length} icon={<BookOpen size={18} />} color="#F59E0B" onClick={() => setActiveTab('grades')} />
+                <QuickStat label="Đồ án" value={projects.length} icon={<FolderGit2 size={18} />} color="var(--color-primary)" onClick={() => setActiveTab('projects')} />
+                <QuickStat label="Chứng chỉ" value={certificates.length} icon={<ShieldCheck size={18} />} color="var(--color-success)" onClick={() => setActiveTab('certificates')} />
+                <QuickStat label="Môn học" value={examResults.length} icon={<BookOpen size={18} />} color="var(--color-warning)" onClick={() => setActiveTab('grades')} />
               </div>
 
               {/* Dự án gần đây */}
@@ -455,7 +455,7 @@ export default function StudentProfilePage() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-5)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
                     <FolderGit2 size={18} style={{ color: 'var(--color-primary)' }} />
-                    <h3 style={{ fontSize: '15px', fontWeight: 600 }}>Dự án gần đây</h3>
+                    <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Dự án gần đây</h3>
                   </div>
                   <button
                     style={{ fontSize: '13px', color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontFamily: 'var(--font-family)', fontWeight: 500 }}
@@ -466,8 +466,8 @@ export default function StudentProfilePage() {
                 </div>
 
                 {projects.length > 0 ? projects.slice(0, 2).map((project) => (
-                  <div key={project.id} style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-light)', marginBottom: 'var(--space-3)', transition: 'all var(--transition-fast)' }}>
-                    <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: 'var(--space-2)' }}>
+                  <div key={project.id} style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-light)', background: 'var(--color-bg)', marginBottom: 'var(--space-3)', transition: 'all var(--transition-fast)' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
                       {project.projectName}
                     </h4>
                     <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', lineHeight: 1.5, marginBottom: 'var(--space-2)' }}>
@@ -495,7 +495,7 @@ export default function StudentProfilePage() {
             <div className="card" style={{ padding: 'var(--space-8)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-2)' }}>
                 <Award size={20} style={{ color: 'var(--color-primary)' }} />
-                <h3 style={{ fontSize: '18px', fontWeight: 600 }}>Biểu đồ năng lực chuẩn đầu ra</h3>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Biểu đồ năng lực chuẩn đầu ra</h3>
               </div>
               <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-6)' }}>
                 Biểu đồ tổng hợp đánh giá các tiêu chuẩn đầu ra (PLO/CLO) theo thang điểm 10
@@ -509,17 +509,17 @@ export default function StudentProfilePage() {
                     <ResponsiveContainer width="100%" height={350}>
                       <RadarChart data={getRadarData()} outerRadius="75%">
                         <PolarGrid stroke="var(--color-border)" strokeDasharray="3 3" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#475569', fontWeight: 500 }} />
-                        <PolarRadiusAxis angle={90} domain={[0, 10]} tick={{ fontSize: 10, fill: '#94A3B8' }} tickCount={6} />
-                        <Radar name="Điểm đạt" dataKey="score" stroke="#4F46E5" fill="url(#radarGradient)" fillOpacity={0.6} strokeWidth={2.5} dot={{ r: 4, fill: '#4F46E5', strokeWidth: 2, stroke: '#fff' }} />
+                        <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--color-text-secondary)', fontWeight: 500 }} />
+                        <PolarRadiusAxis angle={90} domain={[0, 10]} tick={{ fontSize: 10, fill: 'var(--color-text-muted)' }} tickCount={6} />
+                        <Radar name="Điểm đạt" dataKey="score" stroke="var(--color-accent-ai)" fill="url(#radarGradient)" fillOpacity={0.6} strokeWidth={2.5} dot={{ r: 4, fill: 'var(--color-accent-ai)', strokeWidth: 2, stroke: 'var(--color-surface)' }} />
                         <defs>
                           <linearGradient id="radarGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#4F46E5" stopOpacity={0.4} />
-                            <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.1} />
+                            <stop offset="0%" stopColor="var(--color-accent-ai)" stopOpacity={0.4} />
+                            <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0.1} />
                           </linearGradient>
                         </defs>
                         <Tooltip
-                          contentStyle={{ background: 'white', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 13, fontFamily: 'var(--font-family)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', padding: '8px 14px' }}
+                          contentStyle={{ background: 'var(--color-surface)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 13, fontFamily: 'var(--font-family)', boxShadow: 'var(--shadow-md)', padding: '8px 14px' }}
                           formatter={(value, name, props) => [`${value} / 10`, props.payload.fullName]}
                         />
                       </RadarChart>
@@ -531,23 +531,23 @@ export default function StudentProfilePage() {
                     </p>
                     {getRadarData().map((item, idx) => {
                       const pct = (item.score / 10) * 100;
-                      const barColor = item.score >= 9 ? '#10B981' : item.score >= 7.5 ? '#3B82F6' : item.score >= 5 ? '#F59E0B' : '#EF4444';
+                      const barColor = item.score >= 9 ? 'var(--color-success)' : item.score >= 7.5 ? 'var(--color-primary)' : item.score >= 5 ? 'var(--color-warning)' : 'var(--color-danger)';
                       return (
                         <div key={idx} style={{ padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', background: 'var(--color-bg)', border: '1px solid var(--color-border-light)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
                             <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{item.fullName}</span>
                             <span style={{ fontSize: '13px', fontWeight: 700, color: barColor }}>{item.score}/10</span>
                           </div>
-                          <div style={{ height: 6, borderRadius: 3, background: 'var(--color-border-light)', overflow: 'hidden' }}>
+                          <div style={{ height: 6, borderRadius: 3, background: 'var(--color-border)', overflow: 'hidden' }}>
                             <div style={{ height: '100%', width: `${pct}%`, borderRadius: 3, background: barColor, transition: 'width 0.8s ease' }} />
                           </div>
                         </div>
                       );
                     })}
-                    <div style={{ marginTop: 'var(--space-3)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', border: '1px solid #C7D2FE' }}>
+                    <div style={{ marginTop: 'var(--space-3)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', background: 'var(--color-primary-light)', border: '1px solid var(--color-border)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#4338CA' }}>Điểm trung bình PLO</span>
-                        <span style={{ fontSize: '20px', fontWeight: 700, color: '#4338CA' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-primary)' }}>Điểm trung bình PLO</span>
+                        <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-primary)' }}>
                           {(getRadarData().reduce((s, d) => s + d.score, 0) / getRadarData().length).toFixed(1)}
                         </span>
                       </div>
@@ -726,7 +726,7 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
 
       {/* Form thêm mới — Slide-down inline */}
       {showForm && (
-        <div className="card fade-in" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', border: '1.5px solid var(--color-primary)', background: '#FAFBFF' }}>
+        <div className="card fade-in" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', border: '1.5px solid var(--color-primary)', background: 'var(--color-surface)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-5)' }}>
             <h4 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-primary)' }}>Thêm đồ án mới</h4>
             <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 4 }}>
@@ -735,16 +735,16 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
           </div>
 
           {formError && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-3)', background: '#FEF2F2', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', border: '1px solid #FECACA' }}>
-              <AlertCircle size={14} style={{ color: '#EF4444', flexShrink: 0 }} />
-              <span style={{ fontSize: '13px', color: '#DC2626' }}>{formError}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-3)', background: 'var(--color-danger-light)', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', border: '1px solid var(--color-danger)' }}>
+              <AlertCircle size={14} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
+              <span style={{ fontSize: '13px', color: 'var(--color-danger)' }}>{formError}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
               <div className="input-group">
-                <label className="input-label">Tên đồ án <span style={{ color: '#EF4444' }}>*</span></label>
+                <label className="input-label">Tên đồ án <span style={{ color: 'var(--color-danger)' }}>*</span></label>
                 <input className="input-field" placeholder="VD: Hệ thống quản lý thư viện online" value={form.projectName} onChange={e => setForm(p => ({ ...p, projectName: e.target.value }))} />
               </div>
               <div className="input-group">
@@ -793,9 +793,7 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
       ) : projects.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
           {projects.map((project) => (
-            <div key={project.id} className="card" style={{ padding: 'var(--space-6)', transition: 'box-shadow var(--transition-fast)' }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = ''}>
+            <div key={project.id} className="card" style={{ padding: 'var(--space-6)', transition: 'box-shadow var(--transition-fast)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-2)' }}>
@@ -813,7 +811,7 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
                   {project.technologies && (Array.isArray(project.technologies) ? project.technologies : project.technologies.split(',')).filter(Boolean).length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
                       {(Array.isArray(project.technologies) ? project.technologies : project.technologies.split(',')).filter(Boolean).map((tech, idx) => (
-                        <span key={idx} style={{ padding: '2px 10px', borderRadius: 'var(--radius-full)', background: '#EFF6FF', color: '#2563EB', fontSize: '11px', fontWeight: 500 }}>
+                        <span key={idx} style={{ padding: '2px 10px', borderRadius: 'var(--radius-full)', background: 'var(--color-primary-light)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: 500 }}>
                           {tech.trim()}
                         </span>
                       ))}
@@ -823,12 +821,12 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
                   {/* Links */}
                   <div style={{ display: 'flex', gap: 'var(--space-4)', fontSize: '12px' }}>
                     {project.gitUrl && (
-                      <a href={project.gitUrl} target="_blank" rel="noreferrer" style={{ color: '#2563EB', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <a href={project.gitUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
                         <ExternalLink size={12} /> GitHub
                       </a>
                     )}
                     {project.demoUrl && (
-                      <a href={project.demoUrl} target="_blank" rel="noreferrer" style={{ color: '#10B981', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <a href={project.demoUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--color-success)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
                         <ExternalLink size={12} /> Demo
                       </a>
                     )}
@@ -838,7 +836,7 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
                 {/* Nút xóa */}
                 <button onClick={() => onDeleteProject(project.id)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 8, borderRadius: 'var(--radius-md)', transition: 'all var(--transition-fast)', flexShrink: 0 }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#EF4444'; e.currentTarget.style.background = '#FEF2F2'; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-danger)'; e.currentTarget.style.background = 'var(--color-danger-light)'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-text-muted)'; e.currentTarget.style.background = 'none'; }}
                   title="Xóa đồ án">
                   <Trash2 size={16} />
@@ -916,8 +914,8 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-          <ShieldCheck size={20} style={{ color: '#10B981' }} />
-          <h3 style={{ fontSize: '18px', fontWeight: 600 }}>Kho chứng chỉ</h3>
+          <ShieldCheck size={20} style={{ color: 'var(--color-success)' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Kho chứng chỉ</h3>
           <span className="badge badge-success">{certificates.length} chứng chỉ</span>
         </div>
         {studentData && (
@@ -929,25 +927,25 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
 
       {/* Form thêm mới */}
       {showForm && (
-        <div className="card fade-in" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', border: '1.5px solid #10B981', background: '#F0FDF9' }}>
+        <div className="card fade-in" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', border: '1.5px solid var(--color-success)', background: 'var(--color-surface)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-5)' }}>
-            <h4 style={{ fontSize: '16px', fontWeight: 600, color: '#059669' }}>Thêm chứng chỉ mới</h4>
+            <h4 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-success)' }}>Thêm chứng chỉ mới</h4>
             <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 4 }}>
               <X size={20} />
             </button>
           </div>
 
           {formError && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-3)', background: '#FEF2F2', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', border: '1px solid #FECACA' }}>
-              <AlertCircle size={14} style={{ color: '#EF4444', flexShrink: 0 }} />
-              <span style={{ fontSize: '13px', color: '#DC2626' }}>{formError}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-3)', background: 'var(--color-danger-light)', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', border: '1px solid var(--color-danger)' }}>
+              <AlertCircle size={14} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
+              <span style={{ fontSize: '13px', color: 'var(--color-danger)' }}>{formError}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
               <div className="input-group">
-                <label className="input-label">Tên chứng chỉ <span style={{ color: '#EF4444' }}>*</span></label>
+                <label className="input-label">Tên chứng chỉ <span style={{ color: 'var(--color-danger)' }}>*</span></label>
                 <input className="input-field" placeholder="VD: TOEIC 750, AWS Cloud Practitioner" value={form.certificateName} onChange={e => setForm(p => ({ ...p, certificateName: e.target.value }))} />
               </div>
               <div className="input-group">
@@ -985,18 +983,15 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
       ) : certificates.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
           {certificates.map((cert) => (
-            <div key={cert.id} className="card" style={{ padding: 'var(--space-5)', transition: 'box-shadow var(--transition-fast)', position: 'relative' }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = ''}>
-
+            <div key={cert.id} className="card" style={{ padding: 'var(--space-5)', transition: 'box-shadow var(--transition-fast)', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-4)' }}>
                 {/* Icon */}
                 <div style={{
                   width: 44, height: 44, borderRadius: 'var(--radius-md)',
-                  background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)',
+                  background: 'var(--color-success-light)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
-                  <Award size={20} style={{ color: '#059669' }} />
+                  <Award size={20} style={{ color: 'var(--color-success)' }} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -1015,7 +1010,7 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
                       </span>
                     )}
                     {cert.certificateUrl && (
-                      <a href={cert.certificateUrl} target="_blank" rel="noreferrer" style={{ color: '#2563EB', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <a href={cert.certificateUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
                         <ExternalLink size={12} /> Xem chứng chỉ
                       </a>
                     )}
@@ -1025,7 +1020,7 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
                 {/* Nút xóa */}
                 <button onClick={() => onDeleteCertificate(cert.id)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 6, borderRadius: 'var(--radius-md)', transition: 'all var(--transition-fast)', flexShrink: 0 }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#EF4444'; e.currentTarget.style.background = '#FEF2F2'; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-danger)'; e.currentTarget.style.background = 'var(--color-danger-light)'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-text-muted)'; e.currentTarget.style.background = 'none'; }}
                   title="Xóa chứng chỉ">
                   <Trash2 size={15} />
@@ -1062,7 +1057,7 @@ function QuickStat({ label, value, icon, color, onClick }) {
   return (
     <div className="card" onClick={onClick}
       style={{ padding: 'var(--space-5)', cursor: 'pointer', transition: 'all var(--transition-fast)', textAlign: 'center' }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}>
       <div style={{ color, marginBottom: 'var(--space-2)', display: 'flex', justifyContent: 'center' }}>{icon}</div>
       <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 2 }}>{value}</div>
@@ -1084,7 +1079,7 @@ function InfoRow({ label, value, highlight }) {
 
 function SuggestionItem({ text }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'white' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'var(--color-bg)', border: '1px solid var(--color-border-light)' }}>
       <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent-ai)', marginTop: 6, flexShrink: 0 }} />
       <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>{text}</p>
     </div>

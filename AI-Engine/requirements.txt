@@ -21,6 +21,11 @@ structlog==24.4.0
 cachetools==5.5.1
 httpx==0.28.1
 
+# File Parsing (PDF/DOCX text extraction)
+pymupdf==1.25.3
+python-docx==1.1.2
+python-multipart==0.0.20
+
 # Testing
 pytest==8.3.4
 pytest-asyncio==0.25.0

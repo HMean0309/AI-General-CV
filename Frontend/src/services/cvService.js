@@ -58,3 +58,22 @@ export async function archiveCv(id) {
   const response = await api.put(`${CV_ENDPOINTS.DETAIL}/${id}/archive`);
   return response.data;
 }
+
+/**
+ * Upload file JD (PDF/DOCX/TXT) để trích xuất plaintext
+ * Gửi multipart/form-data → Backend → AI-Engine → trả về text
+ * @param {File} file - File object từ input[type=file]
+ * @returns {{ success: boolean, filename: string, text: string, textLength: number }}
+ */
+export async function parseJdFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await api.post('/api/cv/parse-jd-file', formData, {
+    timeout: 30000, // 30 giây cho file processing
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+}

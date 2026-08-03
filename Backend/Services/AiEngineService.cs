@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TayDoApi.DTOs;
@@ -10,6 +11,7 @@ namespace TayDoApi.Services
     public interface IAiEngineService
     {
         Task<AiEngineCvResponseDto> GenerateCvAsync(AiEngineCvRequestDto request);
+        Task<ExtractJdTextResponseDto> ExtractJdTextAsync(IFormFile file);
     }
 
     public class AiEngineService : IAiEngineService
@@ -138,6 +140,49 @@ namespace TayDoApi.Services
                     IsFallback = true
                 }
             };
+        }
+
+        public async Task<ExtractJdTextResponseDto> ExtractJdTextAsync(IFormFile file)
+        {
+            var baseUrl = _configuration["AiEngine:BaseUrl"] ?? "http://localhost:8000";
+            var internalToken = _configuration["AiEngine:InternalToken"] ?? "dev_token_for_testing";
+            var endpoint = $"{baseUrl.TrimEnd('/')}/api/v1/extract-jd-text";
+
+            using var content = new MultipartFormDataContent();
+            using var stream = file.OpenReadStream();
+            var streamContent = new StreamContent(stream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType ?? "application/octet-stream");
+            content.Add(streamContent, "file", file.FileName);
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, endpoint);
+            httpRequest.Headers.Add("X-Internal-Token", internalToken);
+            httpRequest.Content = content;
+
+            try
+            {
+                _logger.LogInformation("Sending file '{FileName}' to AI Engine for text extraction", file.FileName);
+                var response = await _httpClient.SendAsync(httpRequest);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("AI Engine extract-jd-text returned {StatusCode}: {ErrorBody}", response.StatusCode, errorBody);
+                    throw new HttpRequestException($"AI Engine Error ({response.StatusCode}): {errorBody}");
+                }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<ExtractJdTextResponseDto>(responseJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return result ?? throw new InvalidOperationException("Failed to deserialize extract-jd-text response.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to extract JD text from file '{FileName}'", file.FileName);
+                throw;
+            }
         }
     }
 }

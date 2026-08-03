@@ -245,4 +245,22 @@ namespace TayDoApi.DTOs
         public string? TargetRole { get; set; }
         public Guid? StudentId { get; set; }
     }
+
+    /// <summary>
+    /// Response DTO cho endpoint extract-jd-text từ AI-Engine.
+    /// </summary>
+    public class ExtractJdTextResponseDto
+    {
+        [JsonPropertyName("success")]
+        public bool Success { get; set; }
+
+        [JsonPropertyName("filename")]
+        public string Filename { get; set; } = string.Empty;
+
+        [JsonPropertyName("text")]
+        public string Text { get; set; } = string.Empty;
+
+        [JsonPropertyName("textLength")]
+        public int TextLength { get; set; }
+    }
 }

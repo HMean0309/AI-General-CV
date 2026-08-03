@@ -217,5 +217,42 @@ namespace TayDoApi.Controllers
             var cvResponse = JsonSerializer.Deserialize<AiEngineCvResponseDto>(record.CvDataJson);
             return Ok(cvResponse);
         }
+
+        /// <summary>
+        /// POST /api/cv/parse-jd-file — Upload file PDF/DOCX/TXT, trích xuất plaintext JD
+        /// Forward file tới AI-Engine /api/v1/extract-jd-text
+        /// </summary>
+        [HttpPost("parse-jd-file")]
+        public async Task<IActionResult> ParseJdFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { message = "File không được để trống." });
+            }
+
+            // Giới hạn 5MB
+            if (file.Length > 5 * 1024 * 1024)
+            {
+                return BadRequest(new { message = "File vượt quá giới hạn 5MB." });
+            }
+
+            // Kiểm tra extension
+            var allowedExtensions = new[] { ".pdf", ".docx", ".doc", ".txt" };
+            var ext = Path.GetExtension(file.FileName)?.ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !allowedExtensions.Contains(ext))
+            {
+                return BadRequest(new { message = $"Định dạng file '{ext}' không được hỗ trợ. Chỉ hỗ trợ: {string.Join(", ", allowedExtensions)}" });
+            }
+
+            try
+            {
+                var result = await _aiEngineService.ExtractJdTextAsync(file);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi xử lý file: {ex.Message}" });
+            }
+        }
     }
 }

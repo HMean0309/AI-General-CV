@@ -48,14 +48,14 @@ export default function Sidebar() {
       style={{
         width: isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)',
         minHeight: '100vh',
-        background: 'var(--color-secondary)', /* Màu phẳng Slate sẫm */
+        background: 'var(--color-sidebar-bg)', /* Slate 800 ở Light, Slate 950 ở Dark */
         position: 'fixed',
         top: 0,
         left: 0,
         zIndex: 50,
         display: 'flex',
         flexDirection: 'column',
-        transition: 'width var(--transition-normal)',
+        transition: 'width var(--transition-normal), background-color 300ms ease',
         boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
         overflow: 'hidden',
         borderRight: '1px solid rgba(255, 255, 255, 0.05)',

@@ -14,9 +14,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   Upload, FileText, Sparkles, ArrowRight,
   AlertTriangle, Share2, FileDown, Download, Save,
-  Check, Loader2, RefreshCw, ChevronRight,
+  Check, Loader2, RefreshCw, ChevronRight, X, Paperclip,
 } from 'lucide-react';
-import { generateCV } from '@/services/cvService';
+import { generateCV, parseJdFile } from '@/services/cvService';
 
 export default function CvWorkspacePage() {
   const { user } = useAuth();
@@ -24,6 +24,10 @@ export default function CvWorkspacePage() {
   const fileInputRef = useRef(null);
   const [dragOver, setDragOver] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
+  // File attachment state
+  const [attachedFile, setAttachedFile] = useState(null); // { name, size }
+  const [fileParseLoading, setFileParseLoading] = useState(false);
+  const [fileParseError, setFileParseError] = useState('');
 
   // Lưu CV vào Lịch sử ứng tuyển (localStorage)
   function handleSaveCV() {
@@ -108,12 +112,63 @@ export default function CvWorkspacePage() {
     if (file) readFileContent(file);
   }
 
-  function readFileContent(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      store.setJobDescription(e.target.result);
-    };
-    reader.readAsText(file);
+  async function readFileContent(file) {
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    // File .txt → đọc trực tiếp trên client
+    if (ext === 'txt') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        store.setJobDescription(e.target.result);
+        setAttachedFile({ name: file.name, size: file.size });
+        setFileParseError('');
+      };
+      reader.readAsText(file);
+      return;
+    }
+
+    // File PDF/DOCX → gửi lên server trích xuất text
+    const allowedExts = ['pdf', 'docx', 'doc'];
+    if (!allowedExts.includes(ext)) {
+      setFileParseError(`Định dạng .${ext} không được hỗ trợ. Chỉ hỗ trợ: .pdf, .docx, .txt`);
+      return;
+    }
+
+    // Giới hạn 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setFileParseError('File vượt quá giới hạn 5MB.');
+      return;
+    }
+
+    setFileParseLoading(true);
+    setFileParseError('');
+    setAttachedFile({ name: file.name, size: file.size });
+
+    try {
+      const result = await parseJdFile(file);
+      if (result.success && result.text) {
+        store.setJobDescription(result.text);
+        setFileParseError('');
+      } else {
+        setFileParseError('Không thể trích xuất nội dung từ file.');
+        setAttachedFile(null);
+      }
+    } catch (err) {
+      console.error('File parse error:', err);
+      const msg = err.response?.data?.message || err.message || 'Lỗi xử lý file.';
+      setFileParseError(msg);
+      setAttachedFile(null);
+    } finally {
+      setFileParseLoading(false);
+    }
+  }
+
+  // Xóa file đính kèm
+  function handleRemoveFile() {
+    setAttachedFile(null);
+    setFileParseError('');
+    store.setJobDescription('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   // Xuất PDF chuẩn 1 trang A4 (html2pdf.js)
@@ -122,7 +177,7 @@ export default function CvWorkspacePage() {
     if (!element) return;
 
     const html2pdf = (await import('html2pdf.js')).default;
-    
+
     // Lưu style cũ
     const originalShadow = element.style.boxShadow;
     const originalRadius = element.style.borderRadius;
@@ -201,6 +256,76 @@ export default function CvWorkspacePage() {
               {/* JD Textarea + Drag&Drop */}
               <div className="input-group" style={{ marginBottom: 'var(--space-5)' }}>
                 <label className="input-label">Nội dung tin tuyển dụng (JD)</label>
+
+                {/* File attachment chip */}
+                {attachedFile && (
+                  <div
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+                      padding: '8px 12px', marginBottom: 'var(--space-3)',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--color-primary-light)',
+                      border: '1px solid var(--color-primary)',
+                      fontSize: '13px', color: 'var(--color-primary)',
+                    }}
+                  >
+                    <Paperclip size={14} />
+                    <span style={{ fontWeight: 600 }}>{attachedFile.name}</span>
+                    <span style={{ color: 'var(--color-text-secondary)', fontSize: '12px' }}>
+                      ({(attachedFile.size / 1024).toFixed(1)} KB)
+                    </span>
+                    {fileParseLoading && (
+                      <Loader2 size={14} style={{ animation: 'spin 1s linear infinite', marginLeft: 'auto' }} />
+                    )}
+                    {!fileParseLoading && (
+                      <button
+                        onClick={handleRemoveFile}
+                        style={{
+                          marginLeft: 'auto', background: 'none', border: 'none',
+                          cursor: 'pointer', color: 'var(--color-text-secondary)',
+                          padding: 2, display: 'flex',
+                        }}
+                        title="Xóa file đính kèm"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* File parse error */}
+                {fileParseError && (
+                  <div
+                    style={{
+                      padding: '8px 12px', marginBottom: 'var(--space-3)',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--color-danger-light)', border: '1px solid var(--color-danger)',
+                      fontSize: '13px', color: 'var(--color-danger)',
+                      display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+                    }}
+                  >
+                    <AlertTriangle size={14} />
+                    <span>{fileParseError}</span>
+                  </div>
+                )}
+
+                {/* File parse loading overlay */}
+                {fileParseLoading && (
+                  <div
+                    style={{
+                      padding: '16px', marginBottom: 'var(--space-3)',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--color-bg-secondary)',
+                      border: '1px dashed var(--color-primary)',
+                      textAlign: 'center', fontSize: '13px',
+                      color: 'var(--color-text-secondary)',
+                    }}
+                  >
+                    <Loader2 size={20} style={{ animation: 'spin 1s linear infinite', margin: '0 auto var(--space-2)' }} />
+                    <div>Đang trích xuất nội dung từ <strong>{attachedFile?.name}</strong>...</div>
+                  </div>
+                )}
+
                 <div
                   onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                   onDragLeave={() => setDragOver(false)}
@@ -216,12 +341,13 @@ export default function CvWorkspacePage() {
                   <textarea
                     className="input-field"
                     rows={8}
-                    placeholder="Dán toàn bộ nội dung tin tuyển dụng vào đây, hoặc kéo thả file .txt..."
+                    placeholder="Dán toàn bộ nội dung tin tuyển dụng vào đây, hoặc kéo thả / tải file PDF, DOCX, TXT..."
                     value={store.jobDescription}
                     onChange={(e) => store.setJobDescription(e.target.value)}
                     style={{ border: 'none', resize: 'vertical', minHeight: 200 }}
+                    disabled={fileParseLoading}
                   />
-                  {!store.jobDescription && (
+                  {!store.jobDescription && !fileParseLoading && (
                     <div
                       style={{
                         position: 'absolute', bottom: 12, right: 12,
@@ -233,7 +359,7 @@ export default function CvWorkspacePage() {
                         style={{ fontSize: '12px', padding: '6px 12px' }}
                         onClick={() => fileInputRef.current?.click()}
                       >
-                        <Upload size={14} /> Tải file JD
+                        <Upload size={14} /> Tải file JD (.pdf, .docx, .txt)
                       </button>
                       <input
                         ref={fileInputRef}
@@ -322,19 +448,19 @@ export default function CvWorkspacePage() {
                       display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
                       padding: '10px 14px',
                       borderRadius: 'var(--radius-md)',
-                      background: step.done ? '#ECFDF5' : '#F8FAFC',
-                      border: step.done ? '1px solid #A7F3D0' : '1px solid #E2E8F0',
+                      background: step.done ? 'var(--color-success-light)' : 'var(--color-bg)',
+                      border: step.done ? '1px solid var(--color-success)' : '1px solid var(--color-border)',
                       transition: 'all 0.3s ease',
                     }}
                   >
                     {step.done ? (
-                      <Check size={16} style={{ color: '#059669', flexShrink: 0 }} />
+                      <Check size={16} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
                     ) : (
                       <Loader2 size={16} style={{ color: 'var(--color-primary)', flexShrink: 0, animation: 'spin 1s linear infinite' }} />
                     )}
                     <span style={{
                       fontSize: '13px',
-                      color: step.done ? '#065F46' : 'var(--color-text-secondary)',
+                      color: step.done ? 'var(--color-success)' : 'var(--color-text-secondary)',
                       fontWeight: step.done ? 600 : 400,
                     }}>
                       {step.label}
@@ -367,13 +493,13 @@ export default function CvWorkspacePage() {
                   className="card"
                   style={{
                     padding: 'var(--space-5)',
-                    border: '1px solid var(--color-warning-light)',
-                    background: '#FFFBEB',
+                    border: '1px solid var(--color-warning-border)',
+                    background: 'var(--color-warning-light)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
                     <AlertTriangle size={16} style={{ color: 'var(--color-warning)' }} />
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#92400E' }}>Từ khóa còn thiếu</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-warning)' }}>Từ khóa còn thiếu</span>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
                     {store.missingKeywords.map((kw, idx) => (
@@ -391,7 +517,7 @@ export default function CvWorkspacePage() {
                     ))}
                   </div>
                   <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 'var(--space-2)' }}>
-                    Nhấn vào từ khóa để thêm vào CV
+                    Vui lòng bổ sung để đạt điểm cao hơn!
                   </p>
                 </div>
               )}
@@ -471,9 +597,9 @@ export default function CvWorkspacePage() {
                   style={{
                     padding: '12px 16px',
                     borderRadius: 'var(--radius-md)',
-                    background: '#ECFDF5',
-                    border: '1px solid #A7F3D0',
-                    color: '#065F46',
+                    background: 'var(--color-success-light)',
+                    border: '1px solid var(--color-success)',
+                    color: 'var(--color-success)',
                     fontSize: '14px',
                     fontWeight: 600,
                     marginBottom: 'var(--space-4)',

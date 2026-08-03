@@ -25,7 +25,7 @@ export default function MatchScoreCircle({ score = 0, size = 140, strokeWidth = 
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="var(--color-border-light)"
+          stroke="var(--color-border)"
           strokeWidth={strokeWidth}
         />
         {/* Progress circle */}

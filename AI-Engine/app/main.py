@@ -11,7 +11,7 @@ import uuid
 from contextlib import asynccontextmanager
 
 import structlog
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
@@ -23,6 +23,7 @@ from app.middleware.rate_limiter import limiter, rate_limit_exceeded_handler
 from app.schemas.request import GenerateCvRequest
 from app.schemas.response import GenerateCvResponse
 from app.services import cv_generator
+from app.services.file_parser import extract_text_from_file
 
 # Configure structured logging
 structlog.configure(
@@ -206,4 +207,54 @@ async def generate_cv_endpoint(
                 latencyMs=0,
                 isFallback=True,
             ),
+        )
+
+
+# ──────────────────────────────────────────────────────
+# File Parsing — Extract JD text from PDF/DOCX
+# ──────────────────────────────────────────────────────
+@app.post(
+    "/api/v1/extract-jd-text",
+    summary="Extract plaintext from JD file (PDF/DOCX/TXT)",
+    description=(
+        "Upload a Job Description file (PDF, DOCX, or TXT). "
+        "Returns the extracted plaintext content for use in CV generation."
+    ),
+)
+async def extract_jd_text_endpoint(
+    request: Request,
+    file: UploadFile = File(..., description="File JD (PDF/DOCX/TXT, tối đa 5MB)"),
+):
+    """
+    Nhận file JD dạng binary, trích xuất plaintext và trả về.
+    Hỗ trợ: .pdf, .docx, .doc, .txt
+    """
+    try:
+        file_bytes = await file.read()
+        filename = file.filename or "unknown.txt"
+
+        logger.info(
+            "endpoint.extract_jd_text",
+            filename=filename,
+            content_type=file.content_type,
+            size_bytes=len(file_bytes),
+        )
+
+        extracted_text = extract_text_from_file(file_bytes, filename)
+
+        return {
+            "success": True,
+            "filename": filename,
+            "text": extracted_text,
+            "textLength": len(extracted_text),
+        }
+
+    except ValueError as e:
+        logger.warning("endpoint.extract_jd_text.validation_error", error=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error("endpoint.extract_jd_text.unexpected_error", error=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Lỗi xử lý file: {str(e)}",
         )
