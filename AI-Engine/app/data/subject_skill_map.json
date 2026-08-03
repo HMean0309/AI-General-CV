@@ -1,0 +1,585 @@
+{
+  "lap trinh huong doi tuong": [
+    "OOP",
+    "Java",
+    "C++",
+    "Design Patterns"
+  ],
+  "lap trinh huong su kien": [
+    "Event-Driven Programming",
+    "C#",
+    ".NET"
+  ],
+  "co so du lieu": [
+    "SQL",
+    "Database Design",
+    "MySQL",
+    "PostgreSQL"
+  ],
+  "he quan tri co so du lieu": [
+    "Database Administration",
+    "SQL Server",
+    "MySQL",
+    "PostgreSQL"
+  ],
+  "cau truc du lieu va giai thuat": [
+    "Data Structures",
+    "Algorithms",
+    "Problem Solving"
+  ],
+  "tri tue nhan tao": [
+    "Artificial Intelligence",
+    "Machine Learning",
+    "Python"
+  ],
+  "hoc may": [
+    "Machine Learning",
+    "Python",
+    "Scikit-learn",
+    "TensorFlow"
+  ],
+  "hoc sau": [
+    "Deep Learning",
+    "Neural Networks",
+    "PyTorch",
+    "TensorFlow"
+  ],
+  "xu ly ngon ngu tu nhien": [
+    "NLP",
+    "Text Processing",
+    "Python",
+    "Transformers"
+  ],
+  "thi giac may tinh": [
+    "Computer Vision",
+    "OpenCV",
+    "CNN",
+    "Image Processing"
+  ],
+  "lap trinh web": [
+    "Web Development",
+    "HTML",
+    "CSS",
+    "JavaScript"
+  ],
+  "phat trien ung dung web": [
+    "Web Development",
+    "React",
+    "Node.js",
+    "REST API"
+  ],
+  "phat trien phan mem": [
+    "Software Development",
+    "Agile",
+    "Git",
+    "CI/CD"
+  ],
+  "cong nghe phan mem": [
+    "Software Engineering",
+    "UML",
+    "Design Patterns",
+    "Agile"
+  ],
+  "ky thuat phan mem": [
+    "Software Engineering",
+    "SDLC",
+    "Testing",
+    "Agile"
+  ],
+  "mang may tinh": [
+    "Computer Networks",
+    "TCP/IP",
+    "Network Security"
+  ],
+  "an toan thong tin": [
+    "Information Security",
+    "Cybersecurity",
+    "Encryption"
+  ],
+  "bao mat thong tin": [
+    "Information Security",
+    "Cryptography",
+    "Network Security"
+  ],
+  "he dieu hanh": [
+    "Operating Systems",
+    "Linux",
+    "Process Management"
+  ],
+  "dien toan dam may": [
+    "Cloud Computing",
+    "AWS",
+    "Azure",
+    "Docker"
+  ],
+  "lap trinh di dong": [
+    "Mobile Development",
+    "Android",
+    "iOS",
+    "React Native"
+  ],
+  "phat trien ung dung di dong": [
+    "Mobile Development",
+    "Flutter",
+    "Kotlin",
+    "Swift"
+  ],
+  "lap trinh python": [
+    "Python",
+    "Scripting",
+    "Automation"
+  ],
+  "lap trinh java": [
+    "Java",
+    "OOP",
+    "Spring Boot"
+  ],
+  "lap trinh c": [
+    "C Programming",
+    "Systems Programming",
+    "Memory Management"
+  ],
+  "lap trinh c++": [
+    "C++",
+    "OOP",
+    "Data Structures"
+  ],
+  "lap trinh c#": [
+    "C#",
+    ".NET",
+    "ASP.NET"
+  ],
+  "nhap mon lap trinh": [
+    "Programming Fundamentals",
+    "Logic",
+    "Problem Solving"
+  ],
+  "phan tich thiet ke he thong": [
+    "System Analysis",
+    "UML",
+    "Requirements Engineering"
+  ],
+  "phan tich thiet ke huong doi tuong": [
+    "OOP Design",
+    "UML",
+    "Design Patterns"
+  ],
+  "quan tri du an phan mem": [
+    "Project Management",
+    "Agile",
+    "Scrum"
+  ],
+  "do an tot nghiep": [
+    "Research",
+    "Problem Solving",
+    "Technical Writing"
+  ],
+  "thuc tap doanh nghiep": [
+    "Industry Experience",
+    "Teamwork",
+    "Communication"
+  ],
+  "toan roi rac": [
+    "Discrete Mathematics",
+    "Logic",
+    "Graph Theory"
+  ],
+  "xac suat thong ke": [
+    "Statistics",
+    "Probability",
+    "Data Analysis"
+  ],
+  "dai so tuyen tinh": [
+    "Linear Algebra",
+    "Mathematics",
+    "Matrix Operations"
+  ],
+  "giai tich": [
+    "Calculus",
+    "Mathematics",
+    "Mathematical Analysis"
+  ],
+  "tin hoc dai cuong": [
+    "Computer Science Fundamentals",
+    "Programming Basics"
+  ],
+  "thiet ke giao dien": [
+    "UI Design",
+    "UX Design",
+    "Figma",
+    "User Experience"
+  ],
+  "tuong tac nguoi may": [
+    "HCI",
+    "UX Research",
+    "Usability Testing"
+  ],
+  "khai pha du lieu": [
+    "Data Mining",
+    "Python",
+    "Machine Learning",
+    "Analytics"
+  ],
+  "du lieu lon": [
+    "Big Data",
+    "Hadoop",
+    "Spark",
+    "Data Engineering"
+  ],
+  "khoa hoc du lieu": [
+    "Data Science",
+    "Python",
+    "Statistics",
+    "Visualization"
+  ],
+  "internet of things": [
+    "IoT",
+    "Embedded Systems",
+    "Sensors",
+    "Arduino"
+  ],
+  "blockchain": [
+    "Blockchain",
+    "Smart Contracts",
+    "Solidity",
+    "Cryptocurrency"
+  ],
+  "phat trien game": [
+    "Game Development",
+    "Unity",
+    "C#",
+    "3D Graphics"
+  ],
+  "do hoa may tinh": [
+    "Computer Graphics",
+    "OpenGL",
+    "3D Rendering"
+  ],
+  "quan tri mang": [
+    "Network Administration",
+    "Linux",
+    "Server Management"
+  ],
+  "testing phan mem": [
+    "Software Testing",
+    "QA",
+    "Selenium",
+    "Test Automation"
+  ],
+  "devops": [
+    "DevOps",
+    "Docker",
+    "Kubernetes",
+    "CI/CD",
+    "Jenkins"
+  ],
+  "microservices": [
+    "Microservices",
+    "Docker",
+    "API Gateway",
+    "Message Queue"
+  ],
+  "kien truc may tinh": [
+    "Computer Architecture",
+    "Assembly Language",
+    "CPU Design",
+    "Digital Logic"
+  ],
+  "he thong nhung": [
+    "Embedded Systems",
+    "Microcontroller",
+    "RTOS",
+    "IoT Firmware"
+  ],
+  "nguyen ly thiet ke so": [
+    "Digital Logic Design",
+    "Boolean Algebra",
+    "FPGA",
+    "VHDL"
+  ],
+  "ly thuyet do thi": [
+    "Graph Theory",
+    "Shortest Path Algorithms",
+    "Network Analysis"
+  ],
+  "toi uu hoa": [
+    "Optimization",
+    "Linear Programming",
+    "Operations Research"
+  ],
+  "phuong phap tinh": [
+    "Numerical Methods",
+    "Scientific Computing",
+    "MATLAB"
+  ],
+  "logic hoc": [
+    "Mathematical Logic",
+    "Boolean Algebra",
+    "Formal Verification"
+  ],
+  "lap trinh ham": [
+    "Functional Programming",
+    "Haskell",
+    "Scala",
+    "Immutable Data"
+  ],
+  "lap trinh song song": [
+    "Parallel Computing",
+    "Multithreading",
+    "Concurrency",
+    "CUDA"
+  ],
+  "lap trinh nhung": [
+    "Embedded C",
+    "Microcontroller",
+    "Arduino",
+    "Real-time Systems"
+  ],
+  "lap trinh shell": [
+    "Shell Scripting",
+    "Bash",
+    "PowerShell",
+    "Automation"
+  ],
+  "lap trinh javascript": [
+    "JavaScript",
+    "ES6+",
+    "TypeScript",
+    "DOM Manipulation"
+  ],
+  "lap trinh php": [
+    "PHP",
+    "Laravel",
+    "WordPress",
+    "MySQL"
+  ],
+  "lap trinh go": [
+    "Golang",
+    "Concurrency",
+    "Microservices"
+  ],
+  "lap trinh rust": [
+    "Rust",
+    "Memory Safety",
+    "Systems Programming"
+  ],
+  "lap trinh kotlin": [
+    "Kotlin",
+    "Android",
+    "Coroutines"
+  ],
+  "lap trinh swift": [
+    "Swift",
+    "iOS",
+    "SwiftUI",
+    "Xcode"
+  ],
+  "lap trinh r": [
+    "R Programming",
+    "Statistical Computing",
+    "Data Analysis"
+  ],
+  "thiet ke frontend": [
+    "Frontend Development",
+    "Vue.js",
+    "Responsive Design",
+    "CSS Frameworks"
+  ],
+  "quan tri noi dung web": [
+    "CMS",
+    "WordPress",
+    "Content Management",
+    "SEO"
+  ],
+  "thuong mai dien tu": [
+    "E-commerce",
+    "Payment Gateway",
+    "Shopify",
+    "Digital Marketing"
+  ],
+  "he thong thong tin quan ly": [
+    "MIS",
+    "ERP",
+    "Business Process",
+    "SAP"
+  ],
+  "kiem thu xam nhap": [
+    "Penetration Testing",
+    "Ethical Hacking",
+    "Vulnerability Assessment",
+    "Kali Linux"
+  ],
+  "dieu tra so": [
+    "Digital Forensics",
+    "Incident Response",
+    "Malware Analysis"
+  ],
+  "mat ma hoc": [
+    "Cryptography",
+    "Encryption Algorithms",
+    "PKI",
+    "Hashing"
+  ],
+  "xu ly anh so": [
+    "Digital Image Processing",
+    "OpenCV",
+    "Image Filtering",
+    "Image Enhancement"
+  ],
+  "khai thac du lieu web": [
+    "Web Scraping",
+    "Web Mining",
+    "BeautifulSoup",
+    "Data Extraction"
+  ],
+  "he thong khuyen nghi": [
+    "Recommender Systems",
+    "Collaborative Filtering",
+    "Machine Learning"
+  ],
+  "phan tich kinh doanh thong minh": [
+    "Business Intelligence",
+    "Power BI",
+    "Tableau",
+    "Data Warehouse"
+  ],
+  "truc quan hoa du lieu": [
+    "Data Visualization",
+    "Matplotlib",
+    "D3.js",
+    "Power BI"
+  ],
+  "quan ly chat luong phan mem": [
+    "Software Quality Assurance",
+    "ISO 9001",
+    "CMMI",
+    "Quality Metrics"
+  ],
+  "phan tich nghiep vu": [
+    "Business Analysis",
+    "BPMN",
+    "Stakeholder Management",
+    "User Stories"
+  ],
+  "kien truc huong dich vu": [
+    "SOA",
+    "Web Services",
+    "API Gateway",
+    "Enterprise Integration"
+  ],
+  "thiet ke va xay dung api": [
+    "API Design",
+    "GraphQL",
+    "gRPC",
+    "OpenAPI",
+    "Swagger"
+  ],
+  "lap trinh do hoa 3d": [
+    "3D Graphics",
+    "OpenGL",
+    "DirectX",
+    "Shader Programming"
+  ],
+  "thuc te ao": [
+    "Virtual Reality",
+    "Unity",
+    "VR Development",
+    "3D Modeling"
+  ],
+  "thuc te tang cuong": [
+    "Augmented Reality",
+    "ARKit",
+    "ARCore",
+    "Unity"
+  ],
+  "ung dung phi tap trung": [
+    "DApp Development",
+    "Web3",
+    "Ethereum",
+    "Smart Contracts"
+  ],
+  "co so du lieu phi quan he": [
+    "NoSQL",
+    "MongoDB",
+    "Redis",
+    "Cassandra"
+  ],
+  "quan tri he thong linux": [
+    "Linux Administration",
+    "Shell Scripting",
+    "System Monitoring",
+    "Systemd"
+  ],
+  "quan tri co so ha tang cntt": [
+    "IT Infrastructure",
+    "Virtualization",
+    "VMware",
+    "Networking"
+  ],
+  "container hoa ung dung": [
+    "Containerization",
+    "Docker",
+    "Kubernetes",
+    "Helm",
+    "Container Orchestration"
+  ],
+  "phat trien plugin va extension": [
+    "Browser Extension",
+    "Plugin Development",
+    "Chrome API"
+  ],
+  "tu duy thiet ke": [
+    "Design Thinking",
+    "User Research",
+    "Prototyping"
+  ],
+  "phat trien ung dung desktop": [
+    "Desktop Development",
+    "WPF",
+    "Electron",
+    "Qt"
+  ],
+  "kien truc phan mem": [
+    "Software Architecture",
+    "Design Patterns",
+    "Microservices",
+    "Clean Architecture",
+    "SOLID Principles"
+  ],
+  "phat trien ung dung node.js": [
+    "Node.js",
+    "Express.js",
+    "REST API",
+    "JavaScript",
+    "NPM"
+  ],
+  "phat trien ung dung nodejs": [
+    "Node.js",
+    "Express.js",
+    "REST API",
+    "JavaScript",
+    "NPM"
+  ],
+  "co so du lieu nang cao": [
+    "Advanced SQL",
+    "Database Optimization",
+    "Indexing",
+    "Query Tuning",
+    "PostgreSQL",
+    "SQL Server"
+  ],
+  "lap trinh backend": [
+    "Backend Development",
+    "REST API",
+    "Node.js",
+    "Database",
+    "Server-side"
+  ],
+  "lap trinh fullstack": [
+    "Fullstack Development",
+    "Frontend",
+    "Backend",
+    "React",
+    "Node.js"
+  ]
+}

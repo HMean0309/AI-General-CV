@@ -1,0 +1,90 @@
+# ==========================================
+# 1. LARGE FILES & DATABASE DUMPS (>100MB GitHub limit)
+# ==========================================
+script.sql
+*.zip
+*.7z
+*.rar
+*.tar.gz
+
+# ==========================================
+# 2. ENVIRONMENT & SECRETS
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+appsettings.Development.json
+appsettings.Local.json
+*.pem
+*.key
+
+# ==========================================
+# 3. FRONTEND (Next.js / Node.js)
+# ==========================================
+Frontend/node_modules/
+Frontend/.next/
+Frontend/out/
+Frontend/build/
+Frontend/.vercel/
+Frontend/coverage/
+Frontend/*.tsbuildinfo
+Frontend/next-env.d.ts
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+
+# Generic Node patterns
+node_modules/
+.next/
+
+# ==========================================
+# 4. BACKEND (.NET / C#)
+# ==========================================
+Backend/**/bin/
+Backend/**/obj/
+Backend/**/.idea/
+Backend/**/.vs/
+Backend/**/*.user
+Backend/**/*.suo
+Backend/**/*.userosscache
+Backend/**/*.sln.docstates
+
+# Generic .NET patterns
+bin/
+obj/
+.vs/
+
+# ==========================================
+# 5. AI ENGINE (Python / FastAPI)
+# ==========================================
+AI-Engine/venv/
+AI-Engine/env/
+AI-Engine/.venv/
+AI-Engine/__pycache__/
+AI-Engine/*/__pycache__/
+AI-Engine/*/*/__pycache__/
+AI-Engine/.pytest_cache/
+AI-Engine/.coverage
+AI-Engine/htmlcov/
+AI-Engine/*.pyc
+AI-Engine/*.pyo
+AI-Engine/*.pyd
+
+# Generic Python patterns
+venv/
+__pycache__/
+.pytest_cache/
+
+# ==========================================
+# 6. IDE & SYSTEM FILES
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
