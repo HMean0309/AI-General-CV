@@ -181,7 +181,7 @@ Khi sinh viên bấm nút **"Phân tích JD & Tối ưu hóa CV với AI"**:
 
 ### V. HỆ THỐNG GIAO DIỆN ĐỐI XỨNG (SYMMETRIC LIGHT/DARK THEME SYSTEM)
 
-Dự án áp dụng hệ thống thiết kế giao diện đối xứng chuẩn hiện đại (Design Tokens) thông qua CSS Custom Properties trong file [`globals.css`](file:///c:/Users/HMean/Desktop/Báo cáo thực tập/AIGeneralCV/Frontend/src/app/globals.css):
+Dự án áp dụng hệ thống thiết kế giao diện đối xứng chuẩn hiện đại (Design Tokens) thông qua CSS Custom Properties trong file `globals.css`.
 
 1. **Bảng màu Slate-based cao cấp:**
    - **Light Mode (`:root`):** Nền chính `#F8FAFC` (Slate 50), Card bề mặt `#FFFFFF`, Chữ chính `#1E293B` (Slate 800), Viền `#E2E8F0`.
