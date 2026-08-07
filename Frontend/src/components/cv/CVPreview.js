@@ -17,24 +17,25 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
   const displayRole = targetRole || personalInfo.title || '';
 
   return (
-    <div
-      id="cv-preview-content"
-      style={{
-        width: '210mm',
-        maxWidth: '100%',
-        background: '#FFFFFF',
-        padding: '28px 32px',
-        fontFamily: "'Be Vietnam Pro', 'Inter', Arial, sans-serif",
-        fontSize: '10pt',
-        lineHeight: 1.5,
-        color: '#000000',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        borderRadius: '8px',
-        position: 'relative',
-        boxSizing: 'border-box',
-        margin: '0 auto',
-      }}
-    >
+    <div className="cv-preview-scale-wrapper">
+      <div
+        id="cv-preview-content"
+        style={{
+          width: '210mm',
+          maxWidth: '100%',
+          background: '#FFFFFF',
+          padding: '24px 20px',
+          fontFamily: "'Be Vietnam Pro', 'Inter', Arial, sans-serif",
+          fontSize: '10pt',
+          lineHeight: 1.5,
+          color: '#000000',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+          borderRadius: '8px',
+          position: 'relative',
+          boxSizing: 'border-box',
+          margin: '0 auto',
+        }}
+      >
       {/* ─── Header ─── */}
       <div style={{ marginBottom: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -194,6 +195,7 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 }

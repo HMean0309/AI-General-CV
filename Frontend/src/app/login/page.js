@@ -109,7 +109,7 @@ export default function LoginPage() {
           borderRadius: 'var(--radius-xl)',
           boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
           border: '1px solid var(--color-border)',
-          padding: 'var(--space-10) var(--space-8)',
+          padding: 'var(--space-6) var(--space-5)',
           position: 'relative',
           zIndex: 1,
         }}

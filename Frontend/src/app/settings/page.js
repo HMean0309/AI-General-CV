@@ -64,7 +64,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Info */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)', marginBottom: 'var(--space-8)', padding: 'var(--space-5)', borderRadius: 'var(--radius-md)', background: 'var(--color-bg)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-6)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', background: 'var(--color-bg)' }}>
             <InfoField label="Họ và tên" value={user?.fullName || '—'} />
             <InfoField label="Mã SV" value={user?.userInternalId || '—'} />
             <InfoField label="Tên đăng nhập" value={user?.userName || '—'} />

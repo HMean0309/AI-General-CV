@@ -363,10 +363,13 @@ small, .text-caption {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-1) var(--space-3);
+  padding: 4px 10px;
   border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.2;
 }
 
 .badge-primary {
@@ -395,4 +398,83 @@ small, .text-caption {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ============================================================
+   Responsive Media Queries (Mobile & Tablet First Optimizations)
+   ============================================================ */
+
+/* Hide on mobile / desktop helpers */
+.hide-on-mobile {
+  display: flex;
+}
+.show-on-mobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .show-on-mobile {
+    display: flex !important;
+  }
+
+  /* Compact typography & padding for mobile */
+  :root {
+    --space-8: 16px;
+    --space-6: 16px;
+    --space-5: 12px;
+  }
+
+  h1 { font-size: 20px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+
+  .card {
+    padding: var(--space-4) !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .btn {
+    padding: var(--space-2) var(--space-4) !important;
+    font-size: 13px !important;
+  }
+
+  /* Mobile Sidebar Off-Canvas Drawer (Ẩn hoàn toàn khỏi màn hình di động) */
+  .sidebar {
+    transform: translateX(-100%) !important;
+    width: var(--sidebar-width) !important;
+    z-index: 100 !important;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  /* Force main content margin-left to 0 on mobile */
+  div[style*="margin-left"] {
+    margin-left: 0 !important;
+  }
+
+  /* Responsive A4 CV Preview Scaling */
+  .cv-preview-scale-wrapper {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Grid Stack Helper */
+  .grid-responsive-2col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-full-mobile {
+    width: 100% !important;
+  }
+}
+
 

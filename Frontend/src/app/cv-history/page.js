@@ -186,8 +186,8 @@ export default function CvHistoryPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-              gap: 'var(--space-5)',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 'var(--space-4)',
             }}
           >
             {cvList.map((cv) => (

@@ -290,7 +290,7 @@ export default function StudentProfilePage() {
 
         {/* TAB 1: Tổng quan hồ sơ */}
         {activeTab === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 'var(--space-6)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-6)' }}>
             {/* Cột trái: Thẻ cá nhân */}
             <div className="card" style={{ padding: 'var(--space-8)' }}>
               {loading ? (
@@ -522,7 +522,7 @@ export default function StudentProfilePage() {
               {loading ? (
                 <div className="skeleton" style={{ height: 400, borderRadius: 'var(--radius-lg)' }} />
               ) : getRadarData().length >= 3 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-6)', alignItems: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 'var(--space-6)', alignItems: 'center' }}>
                   <div>
                     <ResponsiveContainer width="100%" height={350}>
                       <RadarChart data={getRadarData()} outerRadius="75%">
@@ -624,10 +624,10 @@ export default function StudentProfilePage() {
         {/* TAB 5: Kết quả học tập */}
         {activeTab === 'grades' && (
           <div className="card" style={{ padding: 'var(--space-8)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
                 <BookOpen size={20} style={{ color: 'var(--color-success)' }} />
-                <h3 style={{ fontSize: '18px', fontWeight: 600 }}>Bảng điểm chuyên ngành</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: 600, margin: 0 }}>Bảng điểm chuyên ngành</h3>
               </div>
               <span className="badge badge-primary">{examResults.length} kết quả</span>
             </div>
@@ -639,8 +639,8 @@ export default function StudentProfilePage() {
                 ))}
               </div>
             ) : examResults.length > 0 ? (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                <table style={{ width: '100%', minWidth: 640, borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
                       <th style={thStyle}>STT</th>
@@ -661,7 +661,7 @@ export default function StudentProfilePage() {
                           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-bg)'; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}>
                           <td style={tdStyle}>{idx + 1}</td>
-                          <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{examMap[result.subjectTeachingExamId] || result.notes || '—'}</td>
+                          <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500, whiteSpace: 'nowrap' }}>{examMap[result.subjectTeachingExamId] || result.notes || '—'}</td>
                           <td style={{ ...tdStyle, textAlign: 'left', color: 'var(--color-text-secondary)', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.examResultDesc || '—'}</td>
                           <td style={tdStyle}>{result.result != null ? result.result.toFixed(1) : '—'}</td>
                           <td style={tdStyle}><span style={{ fontWeight: 600 }}>{result.combinedResult != null ? result.combinedResult.toFixed(1) : '—'}</span></td>
@@ -729,15 +729,15 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <FolderGit2 size={20} style={{ color: 'var(--color-primary)' }} />
-          <h3 style={{ fontSize: '18px', fontWeight: 600 }}>Kho dự án & Đồ án</h3>
+          <h3 style={{ fontSize: '17px', fontWeight: 600, margin: 0 }}>Kho dự án & Đồ án</h3>
           <span className="badge badge-primary">{projects.length} dự án</span>
         </div>
         {studentData && (
-          <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(true); }} style={{ fontSize: '13px', padding: '8px 16px' }}>
-            <Plus size={16} /> Thêm đồ án
+          <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(true); }} style={{ fontSize: '12px', padding: '6px 14px' }}>
+            <Plus size={15} /> Thêm đồ án
           </button>
         )}
       </div>
@@ -760,7 +760,7 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
           )}
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
               <div className="input-group">
                 <label className="input-label">Tên đồ án <span style={{ color: 'var(--color-danger)' }}>*</span></label>
                 <input className="input-field" placeholder="VD: Hệ thống quản lý thư viện online" value={form.projectName} onChange={e => setForm(p => ({ ...p, projectName: e.target.value }))} />
@@ -782,7 +782,7 @@ function ProjectsTab({ projects, loading, studentData, onCreateProject, onDelete
               <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 4 }}>Nhập nhiều công nghệ cách nhau bởi dấu phẩy</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
               <div className="input-group">
                 <label className="input-label">Link GitHub</label>
                 <input className="input-field" placeholder="https://github.com/..." value={form.gitUrl} onChange={e => setForm(p => ({ ...p, gitUrl: e.target.value }))} />
@@ -930,15 +930,15 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <ShieldCheck size={20} style={{ color: 'var(--color-success)' }} />
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Kho chứng chỉ</h3>
+          <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--color-text-primary)', margin: 0 }}>Kho chứng chỉ</h3>
           <span className="badge badge-success">{certificates.length} chứng chỉ</span>
         </div>
         {studentData && (
-          <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(true); }} style={{ fontSize: '13px', padding: '8px 16px' }}>
-            <Plus size={16} /> Thêm chứng chỉ
+          <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(true); }} style={{ fontSize: '12px', padding: '6px 14px' }}>
+            <Plus size={15} /> Thêm chứng chỉ
           </button>
         )}
       </div>
@@ -961,7 +961,7 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
           )}
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
               <div className="input-group">
                 <label className="input-label">Tên chứng chỉ <span style={{ color: 'var(--color-danger)' }}>*</span></label>
                 <input className="input-field" placeholder="VD: TOEIC 750, AWS Cloud Practitioner" value={form.certificateName} onChange={e => setForm(p => ({ ...p, certificateName: e.target.value }))} />
@@ -972,7 +972,7 @@ function CertificatesTab({ certificates, loading, studentData, onCreateCertifica
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
               <div className="input-group">
                 <label className="input-label">Ngày cấp</label>
                 <input className="input-field" type="date" value={form.issueDate} onChange={e => setForm(p => ({ ...p, issueDate: e.target.value }))} />
@@ -1112,6 +1112,7 @@ const thStyle = {
   textAlign: 'center',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
+  whiteSpace: 'nowrap',
 };
 
 const tdStyle = {

@@ -217,9 +217,9 @@ export default function DashboardPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: 'var(--space-6)',
-            marginBottom: 'var(--space-8)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: 'var(--space-4)',
+            marginBottom: 'var(--space-6)',
           }}
         >
           {loading ? (
@@ -270,12 +270,12 @@ export default function DashboardPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: 'var(--space-6)',
           }}
         >
           {/* Thông tin cá nhân */}
-          <div className="card" style={{ padding: 'var(--space-8)' }}>
+          <div className="card" style={{ padding: 'var(--space-6)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
               <User size={20} style={{ color: 'var(--color-primary)' }} />
               <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Thông tin cá nhân</h3>
@@ -373,8 +373,8 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : examResults.length > 0 ? (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+              <table style={{ width: '100%', minWidth: 580, borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
                     <th style={thStyle}>STT</th>
@@ -396,7 +396,7 @@ export default function DashboardPage() {
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <td style={tdStyle}>{idx + 1}</td>
-                      <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>
+                      <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500, whiteSpace: 'nowrap' }}>
                         {examMap[result.subjectTeachingExamId] || result.notes || '—'}
                       </td>
                       <td style={{ ...tdStyle, textAlign: 'left', color: 'var(--color-text-secondary)', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -541,6 +541,7 @@ const thStyle = {
   textAlign: 'center',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
+  whiteSpace: 'nowrap',
 };
 
 const tdStyle = {

@@ -1,13 +1,12 @@
 'use client';
 // ============================================================
 // TopHeader - Thanh đầu trang
-// Hiển thị: Tiêu đề trang động, Toggle Theme, Avatar + Dropdown đăng xuất
-// Theo AIGeneralCV_Specification.md § 3.1
+// Hiển thị: Nút Hamburger Mobile, Tiêu đề động, Toggle Theme (Desktop), Avatar + Dropdown
 // ============================================================
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { LogOut, ChevronDown, Sun, Moon } from 'lucide-react';
+import { LogOut, ChevronDown, Sun, Moon, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ROLE_LABELS } from '@/lib/constants';
@@ -22,7 +21,7 @@ const PAGE_TITLES = {
   '/test-data': 'Quản trị hệ thống',
 };
 
-export default function TopHeader() {
+export default function TopHeader({ onMobileToggleMenu = () => {} }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { theme, toggleTheme, mounted } = useTheme();
@@ -42,7 +41,7 @@ export default function TopHeader() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 var(--space-8)',
+        padding: '0 var(--space-4)',
         position: 'sticky',
         top: 0,
         zIndex: 40,
@@ -50,19 +49,38 @@ export default function TopHeader() {
         transition: 'background-color 300ms ease, border-color 300ms ease',
       }}
     >
-      {/* Left: Page Title */}
-      <div>
-        <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+      {/* Left: Mobile Hamburger Button + Page Title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        <button
+          onClick={onMobileToggleMenu}
+          className="show-on-mobile"
+          title="Mở menu"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            background: 'var(--color-surface)',
+            color: 'var(--color-text-primary)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <Menu size={20} />
+        </button>
+        <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)', margin: 0 }}>
           {pageTitle}
         </h2>
       </div>
 
-      {/* Right: Theme Switcher + Avatar Dropdown */}
+      {/* Right: Theme Switcher (Desktop Only) + Avatar Dropdown */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-        {/* Nút Toggle Dark / Light Theme */}
+        {/* Nút Toggle Dark / Light Theme (Desktop Only — trên Mobile đã chuyển vào chân Nav) */}
         {mounted && (
           <button
             onClick={toggleTheme}
+            className="hide-on-mobile"
             title={theme === 'dark' ? 'Chuyển sang Giao diện Sáng' : 'Chuyển sang Giao diện Tối'}
             style={{
               width: 40,
@@ -71,26 +89,17 @@ export default function TopHeader() {
               border: '1px solid var(--color-border)',
               background: 'var(--color-surface)',
               color: theme === 'dark' ? '#FBBF24' : 'var(--color-text-secondary)',
-              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               transition: 'all 250ms cubic-bezier(0.4, 0, 0.2, 1)',
               boxShadow: 'var(--shadow-sm)',
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.borderColor = 'var(--color-primary)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.borderColor = 'var(--color-border)';
-            }}
           >
             {theme === 'dark' ? (
-              <Sun size={20} style={{ transition: 'transform 300ms ease', transform: 'rotate(0deg)' }} />
+              <Sun size={20} style={{ transition: 'transform 300ms ease' }} />
             ) : (
-              <Moon size={20} style={{ transition: 'transform 300ms ease', transform: 'rotate(-12deg)' }} />
+              <Moon size={20} style={{ transition: 'transform 300ms ease' }} />
             )}
           </button>
         )}
@@ -102,71 +111,46 @@ export default function TopHeader() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 'var(--space-3)',
-              padding: 'var(--space-2) var(--space-3)',
+              gap: 'var(--space-2)',
+              padding: 'var(--space-1) var(--space-2)',
               borderRadius: 'var(--radius-md)',
               border: 'none',
               background: 'transparent',
               cursor: 'pointer',
-              transition: 'background var(--transition-fast)',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-bg)'; }}
-            onMouseLeave={(e) => { if (!showDropdown) e.currentTarget.style.background = 'transparent'; }}
           >
             <div
               style={{
-                width: 36,
-                height: 36,
+                width: 34,
+                height: 34,
                 borderRadius: 'var(--radius-full)',
                 background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent-ai))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: 600,
-                boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
               }}
             >
               {userInitials}
             </div>
-            <div style={{ textAlign: 'left' }}>
-              <p style={{
-                fontSize: '13px',
-                fontWeight: 600,
-                color: 'var(--color-text-primary)',
-                lineHeight: 1.3,
-                whiteSpace: 'nowrap',
-              }}>
+            <div style={{ textAlign: 'left' }} className="hide-on-mobile">
+              <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.2, margin: 0 }}>
                 {user?.fullName || 'Người dùng'}
               </p>
-              <p style={{
-                fontSize: '11px',
-                color: 'var(--color-text-muted)',
-                lineHeight: 1.3,
-              }}>
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.2, margin: 0 }}>
                 {ROLE_LABELS[user?.role] || 'Sinh viên'}
               </p>
             </div>
-            <ChevronDown
-              size={16}
-              style={{
-                color: 'var(--color-text-muted)',
-                transition: 'transform var(--transition-fast)',
-                transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)',
-              }}
-            />
+            <ChevronDown size={14} style={{ color: 'var(--color-text-muted)' }} />
           </button>
 
           {/* Dropdown Menu */}
           {showDropdown && (
             <>
               <div
-                style={{
-                  position: 'fixed',
-                  inset: 0,
-                  zIndex: 40,
-                }}
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
                 onClick={() => setShowDropdown(false)}
               />
               <div
@@ -174,14 +158,13 @@ export default function TopHeader() {
                   position: 'absolute',
                   top: 'calc(100% + 8px)',
                   right: 0,
-                  width: 200,
+                  width: 190,
                   background: 'var(--color-surface)',
                   borderRadius: 'var(--radius-lg)',
                   boxShadow: 'var(--shadow-xl)',
                   border: '1px solid var(--color-border)',
                   padding: 'var(--space-2)',
                   zIndex: 50,
-                  animation: 'fadeIn 0.15s ease-out',
                 }}
               >
                 <button
@@ -201,12 +184,9 @@ export default function TopHeader() {
                     background: 'transparent',
                     cursor: 'pointer',
                     color: 'var(--color-danger)',
-                    fontSize: '14px',
+                    fontSize: '13px',
                     fontFamily: 'var(--font-family)',
-                    transition: 'background var(--transition-fast)',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-danger-light)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                 >
                   <LogOut size={16} />
                   <span>Đăng xuất</span>

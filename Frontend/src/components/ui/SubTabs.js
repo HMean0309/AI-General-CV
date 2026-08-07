@@ -1,8 +1,7 @@
 'use client';
 // ============================================================
 // SubTabs - Thanh điều hướng ngang phân cấp
-// Nằm ngay dưới Header, dùng cho Hồ sơ sinh viên (4 tab)
-// và Cài đặt (3 tab)
+// Nằm ngay dưới Header, hỗ trợ vuốt cuộn ngang mượt trên Mobile
 // ============================================================
 
 export default function SubTabs({ tabs, activeTab, onTabChange }) {
@@ -12,8 +11,11 @@ export default function SubTabs({ tabs, activeTab, onTabChange }) {
         display: 'flex',
         gap: 'var(--space-1)',
         borderBottom: '2px solid var(--color-border-light)',
-        marginBottom: 'var(--space-6)',
+        marginBottom: 'var(--space-5)',
         paddingBottom: 0,
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        maxWidth: '100%',
       }}
     >
       {tabs.map((tab) => {
@@ -23,8 +25,8 @@ export default function SubTabs({ tabs, activeTab, onTabChange }) {
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
             style={{
-              padding: 'var(--space-3) var(--space-5)',
-              fontSize: '14px',
+              padding: 'var(--space-3) var(--space-4)',
+              fontSize: '13px',
               fontWeight: isActive ? 600 : 400,
               color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
               background: 'transparent',
@@ -35,18 +37,7 @@ export default function SubTabs({ tabs, activeTab, onTabChange }) {
               fontFamily: 'var(--font-family)',
               marginBottom: '-2px',
               whiteSpace: 'nowrap',
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-text-primary)';
-                e.currentTarget.style.borderBottomColor = 'var(--color-border)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-text-secondary)';
-                e.currentTarget.style.borderBottomColor = 'transparent';
-              }
+              flexShrink: 0,
             }}
           >
             {tab.label}
