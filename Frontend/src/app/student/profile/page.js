@@ -1,12 +1,4 @@
 'use client';
-// ============================================================
-// Hồ Sơ Sinh Viên (Student Portfolio) - 5 Tabs
-// Tab 1: Tổng quan hồ sơ (2 cột)
-// Tab 2: Tiến độ Chuẩn đầu ra PLO/CLO (Radar Chart)
-// Tab 3: Danh sách Dự án/Đồ án (CRUD + Toggle AI)
-// Tab 4: Chứng chỉ (CRUD)
-// Tab 5: Kết quả học tập (Bảng điểm)
-// ============================================================
 
 import { useState, useEffect, useCallback } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
@@ -25,6 +17,7 @@ import {
   getEvaluationCriterias,
   getStudentProjects, createProject, deleteProject,
   getStudentCertificates, createCertificate, deleteCertificate,
+  updateStudent, updateUserApi,
 } from '@/services/studentService';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -73,31 +66,56 @@ export default function StudentProfilePage() {
 
   useEffect(() => {
     setInfoForm({
-      email: user?.email || 'nguyenvantest@email.com',
-      phone: user?.phoneNumber || '0909090909',
-      githubUrl: studentData?.githubUrl || 'github.com/nguyenvantest',
-      linkedinUrl: studentData?.linkedinUrl || 'linkedin.com/in/nguyenvantest',
+      email: user?.email || user?.userName || '',
+      phone: user?.mobile || user?.phoneNumber || '',
+      githubUrl: studentData?.githubUrl || '',
+      linkedinUrl: studentData?.linkedinUrl || '',
     });
   }, [user, studentData]);
 
-  function handleSaveInfo() {
-    // 1. Cập nhật AuthContext + localStorage
-    if (user && updateUser) {
-      updateUser({
-        ...user,
-        email: infoForm.email,
-        phoneNumber: infoForm.phone,
-      });
+  async function handleSaveInfo() {
+    try {
+      // 1. Cập nhật Backend cho Student (githubUrl, linkedinUrl)
+      if (studentData) {
+        const updatedStudentPayload = {
+          ...studentData,
+          githubUrl: infoForm.githubUrl,
+          linkedinUrl: infoForm.linkedinUrl,
+        };
+        await updateStudent(studentData.id, updatedStudentPayload);
+      }
+
+      // 2. Cập nhật Backend cho User (mobile)
+      if (user) {
+        const updatedUserPayload = {
+          ...user,
+          mobile: infoForm.phone,
+        };
+        await updateUserApi(user.id, updatedUserPayload).catch(() => { });
+      }
+
+      // 3. Cập nhật AuthContext + localStorage
+      if (user && updateUser) {
+        updateUser({
+          ...user,
+          email: infoForm.email,
+          mobile: infoForm.phone,
+          phoneNumber: infoForm.phone,
+        });
+      }
+
+      // 4. Cập nhật studentData local
+      setStudentData((prev) => ({
+        ...(prev || {}),
+        githubUrl: infoForm.githubUrl,
+        linkedinUrl: infoForm.linkedinUrl,
+      }));
+
+      setIsEditingInfo(false);
+    } catch (err) {
+      console.error('Lỗi khi lưu thông tin:', err);
+      alert('Không thể lưu thông tin lên hệ thống. Vui lòng kiểm tra lại backend.');
     }
-
-    // 2. Cập nhật studentData local
-    setStudentData((prev) => ({
-      ...(prev || {}),
-      githubUrl: infoForm.githubUrl,
-      linkedinUrl: infoForm.linkedinUrl,
-    }));
-
-    setIsEditingInfo(false);
   }
 
   useEffect(() => {

@@ -11,6 +11,7 @@ namespace TayDoApi.Controllers
         public StudentsController(ApplicationDbContext context) : base(context) { }
 
         protected override string[]? ReadRoles => null;
+        protected override string[] WriteRoles => Roles.AdminTeacherStudent;
 
         protected override Guid GetId(Students entity) => entity.Id;
     }

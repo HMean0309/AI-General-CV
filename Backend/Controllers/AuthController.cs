@@ -58,8 +58,11 @@ namespace TayDoApi.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<UserDto>> BootstrapAdmin([FromBody] UserCreateDto dto)
         {
+            if (await _context.Users.AnyAsync(u => !u.IsDeleted))
+                return StatusCode(403, "Tính năng khởi tạo tự do đã bị khóa vì hệ thống đã có tài khoản người dùng. Vui lòng đăng nhập quản trị viên để tạo tài khoản mới.");
+
             if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName))
-                return StatusCode(403, "UserName này đã tồn tại. Hãy chọn UserName khác, hoặc đăng nhập rồi dùng POST /api/users.");
+                return StatusCode(403, "UserName này đã tồn tại.");
 
             var (hash, salt) = _passwordHasher.HashPassword(dto.Password);
             var user = new Models.Users

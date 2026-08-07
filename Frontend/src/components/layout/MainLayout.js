@@ -62,7 +62,6 @@ export default function MainLayout({ children }) {
             }}
           />
           <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>Đang tải...</p>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       </div>
     );

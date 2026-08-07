@@ -1,8 +1,4 @@
 'use client';
-// ============================================================
-// Cài đặt (Settings)
-// Xem thông tin tài khoản, vai trò, đổi mật khẩu
-// ============================================================
 
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
@@ -12,6 +8,7 @@ import {
   Save, Check, AlertCircle,
 } from 'lucide-react';
 import { changePassword } from '@/services/authService';
+import { ROLE_LABELS } from '@/lib/constants';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -71,7 +68,7 @@ export default function SettingsPage() {
             <InfoField label="Họ và tên" value={user?.fullName || '—'} />
             <InfoField label="Mã SV" value={user?.userInternalId || '—'} />
             <InfoField label="Tên đăng nhập" value={user?.userName || '—'} />
-            <InfoField label="Vai trò" value={user?.role === 1 ? 'Quản trị viên' : user?.role === 2 ? 'Giảng viên' : 'Sinh viên'} />
+            <InfoField label="Vai trò" value={ROLE_LABELS[user?.role] || 'Sinh viên'} />
           </div>
 
           {/* Đổi mật khẩu */}

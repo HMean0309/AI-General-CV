@@ -22,7 +22,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ICvAiService, MockCvAiService>();
 builder.Services.AddHttpClient<IAiEngineService, AiEngineService>(client =>
 {
-    client.Timeout = TimeSpan.FromSeconds(35);
+    client.Timeout = TimeSpan.FromSeconds(60);
 });
 
 // JWT Authentication

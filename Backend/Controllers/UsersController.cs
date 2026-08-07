@@ -10,13 +10,7 @@ using TayDoApi.Services;
 
 namespace TayDoApi.Controllers
 {
-    /// <summary>
-    /// Quản lý Users. Phân quyền:
-    /// - Admin: xem/tạo/sửa/xóa toàn bộ user.
-    /// - Teacher: xem được danh sách + chi tiết mọi user (phục vụ tra cứu sinh viên/giảng viên).
-    /// - Student: chỉ xem được hồ sơ CHÍNH MÌNH (GET api/users/{id} với id = chính họ).
-    /// - Tạo/sửa/xóa user: chỉ Admin.
-    /// </summary>
+
     [ApiController]
     [Route("api/users")]
     [Authorize]
@@ -102,11 +96,13 @@ namespace TayDoApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, ToDto(user));
         }
 
-        // PUT api/users/{id}  (Password để trống nếu không đổi) - chỉ Admin
+        // PUT api/users/{id}  (Password để trống nếu không đổi) - Admin hoặc chính user
         [HttpPut("{id:guid}")]
-        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateDto dto)
         {
+            var isAdmin = User.IsInRole(Roles.Admin);
+            if (!isAdmin && CurrentUserId != id) return Forbid();
+
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 

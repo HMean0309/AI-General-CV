@@ -1,10 +1,4 @@
 'use client';
-// ============================================================
-// Admin Dashboard — Quản trị hệ thống
-// Trang dành riêng cho Admin (role=99) xem tổng quan toàn bộ
-// dữ liệu trong hệ thống ngay sau khi đăng nhập.
-// Cấu trúc: MainLayout (Sidebar + TopHeader + Content)
-// ============================================================
 
 import { useState, useEffect, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
@@ -35,30 +29,24 @@ import {
   RefreshCw,
   AlertTriangle,
   Database,
-  ChevronLeft,
-  ChevronRight,
-  Building2,
-  Layers,
-  FileCheck2,
-  Star,
-  ListChecks,
-  Award,
 } from 'lucide-react';
 
-// ---- Tab definitions (11 tabs bao phủ toàn bộ bảng dữ liệu) ----
-const TABS = [
-  { key: 'students', label: 'Sinh viên', icon: Users },
-  { key: 'users', label: 'Tài khoản', icon: UserCheck },
-  { key: 'majors', label: 'Ngành & Niên khóa', icon: GraduationCap },
-  { key: 'faculties', label: 'Khoa', icon: Building2 },
-  { key: 'subjects', label: 'Môn học', icon: BookOpen },
-  { key: 'subjectTeachings', label: 'Lớp học phần', icon: Layers },
-  { key: 'subjectTeachingExams', label: 'Kỳ thi', icon: FileCheck2 },
-  { key: 'exams', label: 'Kết quả thi', icon: ClipboardList },
-  { key: 'evaluationCriterias', label: 'Tiêu chí đánh giá', icon: Star },
-  { key: 'studentEvaluations', label: 'Đánh giá SV', icon: Award },
-  { key: 'studentEvaluationDetails', label: 'Chi tiết đánh giá', icon: ListChecks },
-];
+import { TABS } from './components/adminConfig';
+import KPICard from './components/AdminKPI';
+import { EmptyState, Pagination } from './components/AdminPagination';
+import {
+  StudentsTable,
+  UsersTable,
+  MajorsAcademicTable,
+  FacultiesTable,
+  SubjectsTable,
+  SubjectTeachingsTable,
+  SubjectTeachingExamsTable,
+  ExamResultsTable,
+  EvaluationCriteriasTable,
+  StudentEvaluationsTable,
+  StudentEvaluationDetailsTable,
+} from './components/AdminTables';
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
@@ -68,7 +56,7 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState('students');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Raw data states — tất cả các bảng
+  // Raw data states — tất cả các bảng (GET-only để giám sát)
   const [rawStudents, setRawStudents] = useState([]);
   const [rawMajors, setRawMajors] = useState([]);
   const [rawAcademicYears, setRawAcademicYears] = useState([]);
@@ -100,7 +88,7 @@ export default function AdminDashboardPage() {
     setLoading(true);
     setError('');
     try {
-      // Gọi tất cả API song song — tải hết 1 lần để phân trang client-side
+      // Gọi tất cả API song song — tải dữ liệu giám sát quan sát hệ thống
       const [
         studentsRes1,
         studentsRes2,
@@ -389,7 +377,7 @@ export default function AdminDashboardPage() {
                   Bảng điều khiển quản trị
                 </h1>
                 <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
-                  Tổng quan toàn bộ dữ liệu hệ thống AIGeneralCV — {TABS.length} bảng dữ liệu
+                  Tổng quan dữ liệu quản lý & giám sát hệ thống AIGeneralCV — {TABS.length} bảng dữ liệu
                 </p>
               </div>
             </div>
@@ -514,7 +502,7 @@ export default function AdminDashboardPage() {
               gap: 'var(--space-4)',
             }}
           >
-            {/* Tabs — scrollable khi có nhiều tabs */}
+            {/* Tabs */}
             <div
               style={{
                 display: 'flex',
@@ -527,7 +515,6 @@ export default function AdminDashboardPage() {
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.key;
-                // Hiển thị count badge cho mỗi tab
                 const tabCount = (() => {
                   switch (tab.key) {
                     case 'students': return rawStudents.length;
@@ -647,7 +634,7 @@ export default function AdminDashboardPage() {
                   </span>
                 </div>
 
-                {/* Table */}
+                {/* Table Views */}
                 {totalItems === 0 ? (
                   <EmptyState />
                 ) : (
@@ -734,611 +721,4 @@ export default function AdminDashboardPage() {
       `}</style>
     </MainLayout>
   );
-}
-
-// ============================================================
-// SUB-COMPONENTS
-// ============================================================
-
-// ---- KPI Card ----
-function KPICard({ icon, iconColor, iconBg, label, value }) {
-  return (
-    <div
-      className="card"
-      style={{
-        padding: 'var(--space-4)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--space-3)',
-        border: '1px solid var(--color-border)',
-        boxShadow: 'none',
-      }}
-    >
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          minWidth: 40,
-          borderRadius: 'var(--radius-md)',
-          background: iconBg,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: iconColor,
-        }}
-      >
-        {icon}
-      </div>
-      <div>
-        <p style={{ fontSize: '11px', color: 'var(--color-text-secondary)', fontWeight: 500, marginBottom: 2 }}>
-          {label}
-        </p>
-        <p style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text-primary)', lineHeight: 1.1 }}>
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ---- Empty State ----
-function EmptyState() {
-  return (
-    <div style={{ textAlign: 'center', padding: 'var(--space-16) var(--space-6)', color: 'var(--color-text-muted)' }}>
-      <Database size={48} style={{ margin: '0 auto var(--space-4)', opacity: 0.2 }} />
-      <p style={{ fontSize: '15px', fontWeight: 500 }}>Không tìm thấy dữ liệu</p>
-      <p style={{ fontSize: '13px', marginTop: 'var(--space-2)' }}>Bảng này chưa có dữ liệu hoặc thử thay đổi từ khóa tìm kiếm</p>
-    </div>
-  );
-}
-
-// ---- Pagination ----
-function Pagination({ currentPage, totalPages, onPageChange }) {
-  const getPageNumbers = () => {
-    const pages = [];
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, currentPage + 2);
-    if (end - start < 4) {
-      if (start === 1) end = Math.min(totalPages, start + 4);
-      else start = Math.max(1, end - 4);
-    }
-    for (let i = start; i <= end; i++) pages.push(i);
-    return pages;
-  };
-
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 'var(--space-2)',
-        marginTop: 'var(--space-6)',
-        paddingTop: 'var(--space-4)',
-        borderTop: '1px solid var(--color-border-light)',
-      }}
-    >
-      <button onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} style={paginationBtnStyle}>
-        <ChevronLeft size={16} />
-      </button>
-      {getPageNumbers().map((p) => (
-        <button
-          key={p}
-          onClick={() => onPageChange(p)}
-          style={{
-            ...paginationBtnStyle,
-            background: p === currentPage ? 'var(--color-primary)' : 'transparent',
-            color: p === currentPage ? 'white' : 'var(--color-text-secondary)',
-            fontWeight: p === currentPage ? 600 : 400,
-            border: p === currentPage ? 'none' : '1px solid var(--color-border)',
-          }}
-        >
-          {p}
-        </button>
-      ))}
-      <button onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} style={paginationBtnStyle}>
-        <ChevronRight size={16} />
-      </button>
-    </div>
-  );
-}
-
-// ============================================================
-// TABLE COMPONENTS — 11 bảng dữ liệu
-// ============================================================
-
-// ---- 1. Students Table ----
-function StudentsTable({ data, offset, rawUsers, getMajorName }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Họ và tên</th>
-            <th style={thStyle}>MSSV</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Ngành học</th>
-            <th style={thStyle}>Quê quán</th>
-            <th style={thStyle}>Giới tính</th>
-            <th style={thStyle}>Trạng thái</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((st, idx) => {
-            const userDetail = rawUsers.find((u) => u.id === st.userId);
-            return (
-              <tr key={st.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-                <td style={tdStyle}>{offset + idx + 1}</td>
-                <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--color-secondary)' }}>
-                  {userDetail?.fullName || '—'}
-                </td>
-                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>
-                  {userDetail?.userInternalId || '—'}
-                </td>
-                <td style={{ ...tdStyle, textAlign: 'left' }}>{getMajorName(st.majorId)}</td>
-                <td style={tdStyle}>{st.hometown || st.placeOfBirth || '—'}</td>
-                <td style={tdStyle}>
-                  <span className={`badge ${st.gender === 0 ? 'badge-primary' : st.gender === 1 ? 'badge-warning' : ''}`}>
-                    {st.gender === 0 ? 'Nam' : st.gender === 1 ? 'Nữ' : '—'}
-                  </span>
-                </td>
-                <td style={tdStyle}>
-                  <span className={`badge ${st.studyStatus === 1 ? 'badge-success' : 'badge-warning'}`}>
-                    {st.studyStatus === 1 ? 'Đang học' : st.studyStatus || '—'}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 2. Users Table ----
-function UsersTable({ data, offset }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Họ và tên</th>
-            <th style={thStyle}>Tên đăng nhập</th>
-            <th style={thStyle}>Mã nội bộ</th>
-            <th style={thStyle}>Vai trò</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((u, idx) => (
-            <tr key={u.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600 }}>{u.fullName || '—'}</td>
-              <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{u.userName || '—'}</td>
-              <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{u.userInternalId || '—'}</td>
-              <td style={tdStyle}>
-                <span className={`badge ${u.role === 99 ? 'badge-ai' : u.role === 50 ? 'badge-warning' : 'badge-primary'}`}>
-                  {ROLE_LABELS[u.role] || `Role ${u.role}`}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 3. Majors + Academic Years Table ----
-function MajorsAcademicTable({ majors, academicYears, offset }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-6)' }}>
-      {/* Majors */}
-      <div>
-        <h4 style={sectionTitleStyle}>
-          <GraduationCap size={16} style={{ color: 'var(--color-accent-ai)' }} />
-          Danh sách ngành ({majors.length})
-        </h4>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={tableStyle}>
-            <thead>
-              <tr style={theadRowStyle}>
-                <th style={thStyle}>STT</th>
-                <th style={{ ...thStyle, textAlign: 'left' }}>Tên ngành</th>
-                <th style={{ ...thStyle, textAlign: 'left', fontSize: '11px', color: 'var(--color-text-muted)' }}>ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {majors.map((m, idx) => (
-                <tr key={m.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-                  <td style={tdStyle}>{offset + idx + 1}</td>
-                  <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{m.name}</td>
-                  <td style={guidCellStyle}>{m.id?.substring(0, 8)}...</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* Academic Years */}
-      <div>
-        <h4 style={sectionTitleStyle}>
-          <ClipboardList size={16} style={{ color: 'var(--color-success)' }} />
-          Danh sách niên khóa ({academicYears.length})
-        </h4>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={tableStyle}>
-            <thead>
-              <tr style={theadRowStyle}>
-                <th style={thStyle}>STT</th>
-                <th style={{ ...thStyle, textAlign: 'left' }}>Niên khóa</th>
-                <th style={{ ...thStyle, textAlign: 'left', fontSize: '11px', color: 'var(--color-text-muted)' }}>ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {academicYears.map((ay, idx) => (
-                <tr key={ay.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-                  <td style={tdStyle}>{idx + 1}</td>
-                  <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{ay.name}</td>
-                  <td style={guidCellStyle}>{ay.id?.substring(0, 8)}...</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ---- 4. Faculties Table ----
-function FacultiesTable({ data, offset }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên khoa</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((f, idx) => (
-            <tr key={f.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{f.name || '—'}</td>
-              <td style={guidCellStyle}>{f.id?.substring(0, 8)}...</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 5. Subjects Table ----
-function SubjectsTable({ data, offset }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={thStyle}>Mã môn</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên môn học</th>
-            <th style={thStyle}>Tín chỉ</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((s, idx) => (
-            <tr key={s.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, fontFamily: 'monospace', fontWeight: 500 }}>{s.subjectCode || '—'}</td>
-              <td style={{ ...tdStyle, textAlign: 'left' }}>{s.name}</td>
-              <td style={tdStyle}>
-                <span className="badge badge-primary">{s.creditPoint ?? '—'}</span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 6. SubjectTeachings Table (Lớp học phần) ----
-function SubjectTeachingsTable({ data, offset, getSubjectName }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên lớp học phần</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Môn học</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((st, idx) => (
-            <tr key={st.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{st.name || '—'}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', color: 'var(--color-text-secondary)' }}>
-                {getSubjectName(st.subjectId)}
-              </td>
-              <td style={guidCellStyle}>{st.id?.substring(0, 8)}...</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 7. SubjectTeachingExams Table (Kỳ thi) ----
-function SubjectTeachingExamsTable({ data, offset }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên kỳ thi</th>
-            <th style={thStyle}>Loại</th>
-            <th style={thStyle}>Ngày bắt đầu</th>
-            <th style={thStyle}>Ngày kết thúc</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((e, idx) => (
-            <tr key={e.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{e.name || '—'}</td>
-              <td style={tdStyle}>
-                <span className="badge badge-primary">{e.type ?? '—'}</span>
-              </td>
-              <td style={tdStyle}>{e.startDate ? new Date(e.startDate).toLocaleDateString('vi-VN') : '—'}</td>
-              <td style={tdStyle}>{e.endDate ? new Date(e.endDate).toLocaleDateString('vi-VN') : '—'}</td>
-              <td style={guidCellStyle}>{e.id?.substring(0, 8)}...</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 8. ExamResults Table ----
-function ExamResultsTable({ data, offset, rawStudents, rawUsers }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Sinh viên</th>
-            <th style={thStyle}>Điểm thi</th>
-            <th style={thStyle}>Tổng kết</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Ghi chú</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((r, idx) => {
-            const student = rawStudents.find((st) => st.id === r.studentId);
-            const u = student ? rawUsers.find((x) => x.id === student.userId) : null;
-            const score = r.result;
-            const combined = r.combinedResult;
-            return (
-              <tr key={r.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-                <td style={tdStyle}>{offset + idx + 1}</td>
-                <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600 }}>{u?.fullName || '—'}</td>
-                <td style={tdStyle}>
-                  <span
-                    className={`badge ${score >= 8 ? 'badge-success' : score >= 5 ? 'badge-warning' : 'badge-primary'}`}
-                  >
-                    {score != null ? Number(score).toFixed(1) : '—'}
-                  </span>
-                </td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>
-                  {combined != null ? Number(combined).toFixed(1) : '—'}
-                </td>
-                <td style={{ ...tdStyle, textAlign: 'left', color: 'var(--color-text-secondary)', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {r.notes || '—'}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 9. EvaluationCriterias Table (Tiêu chí đánh giá PLO/CLO) ----
-function EvaluationCriteriasTable({ data, offset }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên tiêu chí</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Mô tả</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((c, idx) => (
-            <tr key={c.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{c.name || '—'}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', color: 'var(--color-text-secondary)', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {c.description || '—'}
-              </td>
-              <td style={guidCellStyle}>{c.id?.substring(0, 8)}...</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 10. StudentEvaluations Table ----
-function StudentEvaluationsTable({ data, offset, getStudentNameById }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Sinh viên</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên đánh giá</th>
-            <th style={thStyle}>Điểm tổng</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((ev, idx) => (
-            <tr key={ev.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600 }}>
-                {getStudentNameById(ev.studentId)}
-              </td>
-              <td style={{ ...tdStyle, textAlign: 'left' }}>{ev.name || '—'}</td>
-              <td style={tdStyle}>
-                {ev.totalScore != null ? (
-                  <span className={`badge ${ev.totalScore >= 8 ? 'badge-success' : ev.totalScore >= 5 ? 'badge-warning' : 'badge-primary'}`}>
-                    {Number(ev.totalScore).toFixed(1)}
-                  </span>
-                ) : '—'}
-              </td>
-              <td style={guidCellStyle}>{ev.id?.substring(0, 8)}...</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---- 11. StudentEvaluationDetails Table ----
-function StudentEvaluationDetailsTable({ data, offset, getCriteriaName }) {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={tableStyle}>
-        <thead>
-          <tr style={theadRowStyle}>
-            <th style={thStyle}>STT</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tên đánh giá</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>Tiêu chí</th>
-            <th style={thStyle}>Điểm SV</th>
-            <th style={thStyle}>Điểm tối đa</th>
-            <th style={{ ...thStyle, textAlign: 'left' }}>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((d, idx) => (
-            <tr key={d.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
-              <td style={tdStyle}>{offset + idx + 1}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 500 }}>{d.evaluationName || '—'}</td>
-              <td style={{ ...tdStyle, textAlign: 'left', color: 'var(--color-text-secondary)' }}>
-                {getCriteriaName(d.evaluationCriteriaId)}
-              </td>
-              <td style={tdStyle}>
-                {d.studentScore != null ? (
-                  <span className={`badge ${d.studentScore >= 8 ? 'badge-success' : d.studentScore >= 5 ? 'badge-warning' : 'badge-primary'}`}>
-                    {Number(d.studentScore).toFixed(1)}
-                  </span>
-                ) : '—'}
-              </td>
-              <td style={tdStyle}>{d.maxScore != null ? d.maxScore : '—'}</td>
-              <td style={guidCellStyle}>{d.id?.substring(0, 8)}...</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ============================================================
-// SHARED STYLES
-// ============================================================
-
-const tableStyle = {
-  width: '100%',
-  borderCollapse: 'collapse',
-};
-
-const theadRowStyle = {
-  borderBottom: '2px solid var(--color-border)',
-};
-
-const thStyle = {
-  padding: 'var(--space-3) var(--space-4)',
-  fontSize: '12px',
-  fontWeight: 600,
-  color: 'var(--color-text-secondary)',
-  textAlign: 'center',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-};
-
-const tdStyle = {
-  padding: 'var(--space-3) var(--space-4)',
-  fontSize: '13px',
-  textAlign: 'center',
-  verticalAlign: 'middle',
-};
-
-const trStyle = {
-  borderBottom: '1px solid var(--color-border-light)',
-  transition: 'background var(--transition-fast)',
-};
-
-const guidCellStyle = {
-  padding: 'var(--space-3) var(--space-4)',
-  textAlign: 'left',
-  fontFamily: 'monospace',
-  fontSize: '11px',
-  color: 'var(--color-text-muted)',
-  verticalAlign: 'middle',
-};
-
-const sectionTitleStyle = {
-  fontSize: '14px',
-  fontWeight: 600,
-  marginBottom: 'var(--space-3)',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'var(--space-2)',
-};
-
-const paginationBtnStyle = {
-  width: 32,
-  height: 32,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 'var(--radius-md)',
-  border: '1px solid var(--color-border)',
-  background: 'transparent',
-  cursor: 'pointer',
-  fontSize: '13px',
-  color: 'var(--color-text-secondary)',
-  fontFamily: 'var(--font-family)',
-  transition: 'all var(--transition-fast)',
-};
-
-// Row hover handlers
-function trHoverIn(e) {
-  e.currentTarget.style.background = 'var(--color-bg)';
-}
-function trHoverOut(e) {
-  e.currentTarget.style.background = 'transparent';
 }

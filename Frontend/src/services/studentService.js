@@ -220,3 +220,20 @@ export async function deleteCertificate(id) {
   const response = await api.delete(`${API_ENDPOINTS.CERTIFICATES}/${id}`);
   return response.data;
 }
+
+/**
+ * Cập nhật thông tin sinh viên
+ */
+export async function updateStudent(id, payload) {
+  const response = await api.put(`${API_ENDPOINTS.STUDENTS}/${id}`, payload);
+  return response.data;
+}
+
+/**
+ * Cập nhật thông tin user (email, mobile...)
+ */
+export async function updateUserApi(id, payload) {
+  const response = await api.put(`${API_ENDPOINTS.USERS}/${id}`, payload);
+  return response.data;
+}
+

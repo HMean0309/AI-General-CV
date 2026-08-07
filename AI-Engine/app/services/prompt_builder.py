@@ -149,3 +149,56 @@ REMEMBER: Output ONLY the JSON object in Vietnamese. No markdown, no explanation
     )
 
     return prompt
+
+
+def build_entry_level_prompt(
+    request: GenerateCvRequest,
+    sanitized_jd: str,
+) -> str:
+    """Build user prompt tailored for entry-level students without coursework/projects."""
+    context = request.academic_context
+
+    prompt = f"""## TARGET JOB DESCRIPTION
+<job_description>
+{sanitized_jd}
+</job_description>
+
+## STUDENT ACADEMIC PROFILE (ENTRY-LEVEL / FRESH GRADUATE)
+- Full Name: {context.full_name}
+- Major: {context.major}
+- GPA: {context.gpa}
+- Student ID: {context.student_id}
+
+### Coursework:
+No coursework data available.
+
+### Projects:
+No project data available.
+
+### Certificates:
+{_format_certificates(context)}
+
+## PRE-ANALYSIS RESULTS
+- Entry-Level Mode: True (No formal projects or coursework listed)
+
+## YOUR TASK
+Generate a complete, entry-level CV in JSON format:
+1. personalInfo: Use fullName: "{context.full_name}".
+2. summary: Write 2-3 concise, enthusiastic sentences (< 45 words) in Professional Vietnamese, highlighting eagerness to learn and apply academic knowledge in {context.major} to the target position.
+3. skills:
+   - technical: Up to 5 fundamental technical skills aligned with {context.major} and the JD.
+   - soft: Exactly 3 professional soft skills (e.g. Ham học hỏi, Chịu khó, Làm việc nhóm).
+4. projects: Must be an empty array []. Do NOT fabricate projects.
+5. certificates: Include up to 2 certificates if listed above, otherwise [].
+6. education: school = "Trường Đại học Tây Đô", major = "{context.major}", duration = "2022 - 2026", gpa = "{context.gpa}".
+
+IMPORTANT: Output ONLY valid JSON in Vietnamese. No markdown formatting."""
+
+    logger.debug(
+        "prompt_builder.entry_level_prompt_built",
+        prompt_length=len(prompt),
+        student_id=context.student_id,
+    )
+
+    return prompt
+

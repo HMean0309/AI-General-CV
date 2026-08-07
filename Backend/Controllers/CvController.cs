@@ -12,6 +12,7 @@ namespace TayDoApi.Controllers
 {
     [ApiController]
     [Route("api/cv")]
+    [Authorize]
     public class CvController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -54,12 +55,6 @@ namespace TayDoApi.Controllers
                 if (ownStudent != null)
                 {
                     targetStudentId = ownStudent.Id;
-                }
-                else
-                {
-                    // Fallback chọn sinh viên đầu tiên trong DB để test demo nếu chưa login
-                    var firstStudent = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => !s.IsDeleted);
-                    if (firstStudent != null) targetStudentId = firstStudent.Id;
                 }
             }
 

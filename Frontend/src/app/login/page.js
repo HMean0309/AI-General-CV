@@ -1,10 +1,4 @@
 'use client';
-// ============================================================
-// Trang Đăng Nhập - AIGeneralCV
-// Gọi POST /api/auth/login → JWT Token
-// Theo FlowWork.md § Bước 1: Xác Thực Người Dùng
-// ============================================================
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CircleUserRound, Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
@@ -264,7 +258,6 @@ export default function LoginPage() {
                   }}
                 />
                 <span>Đang xác thực...</span>
-                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </>
             ) : (
               <>

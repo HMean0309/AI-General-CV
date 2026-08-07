@@ -389,3 +389,10 @@ small, .text-caption {
   background: rgba(129, 140, 248, 0.18);
   color: var(--color-accent-ai);
 }
+
+/* --- Global Keyframe Animations --- */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+

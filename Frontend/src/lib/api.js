@@ -1,20 +1,13 @@
-// ============================================================
-// Axios Instance - AIGeneralCV
-// Interceptor tự động gắn JWT và xử lý lỗi 401
-// Timeout 30s (theo FlowWork.md - do RAG xử lý lâu)
-// ============================================================
-
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://localhost:5000',
-  timeout: 30000, // 30 giây - theo FlowWork.md
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000',
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// --- Request Interceptor: Gắn JWT Token ---
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -33,8 +26,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      const { status } = error.response;
-      if (status === 401) {
+      const { status, config } = error.response;
+      // Không tự động reload/redirect nếu lỗi 401 xảy ra tại request login hoặc ở trang /login
+      const isLoginRequest = config?.url?.includes('/auth/login');
+      const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+
+      if (status === 401 && !isLoginRequest && !isLoginPage) {
         // Token hết hạn hoặc không hợp lệ → xóa token, redirect login
         if (typeof window !== 'undefined') {
           localStorage.removeItem('auth_token');

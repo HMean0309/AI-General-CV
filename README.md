@@ -66,7 +66,7 @@ AIGeneralCV/
 │   ├── Dockerfile           # File cấu hình Docker container
 │   └── requirements.txt     # Danh sách thư viện Python
 ├── Backend/                 # Sub-system: RESTful API (.NET 8)
-│   └── Tay_Do_Project/      # Project C# .NET (Controllers, Services, Models, DTOs)
+│   └── Tay_Do_API/          # Project C# .NET (Controllers, Services, Models, DTOs)
 ├── Frontend/                # Sub-system: Giao diện Web (Next.js)
 │   ├── src/                 # React components & pages
 │   └── package.json         # Danh sách thư viện Node.js

@@ -1,35 +1,80 @@
 'use client';
-// ============================================================
-// Lịch Sử Ứng Tuyển - Card Grid các CV đã lưu thực tế
-// Không sử dụng dữ liệu rác/mẫu. Đọc từ localStorage (saved_cv_history)
-// Thao tác: Xem nhanh, Tải PDF, Sao chép, Lưu trữ, Xóa bản CV
-// ============================================================
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
 import EmptyState from '@/components/ui/EmptyState';
 import CVPreview from '@/components/cv/CVPreview';
+import { getCvHistory, getCvById } from '@/services/cvService';
 import {
   Eye, Download, Copy, Archive, FileText, Trash2,
   Calendar, Building2, Briefcase, X, MoreHorizontal,
 } from 'lucide-react';
 
 export default function CvHistoryPage() {
+  const router = useRouter();
   const [cvList, setCvList] = useState([]);
   const [previewId, setPreviewId] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Đọc danh sách CV thực tế đã lưu
+  // Đọc danh sách CV thực tế từ API Backend
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('saved_cv_history');
-      if (saved) {
-        setCvList(JSON.parse(saved));
+    async function loadHistory() {
+      setLoading(true);
+      let apiResults = [];
+      try {
+        const res = await getCvHistory();
+        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+          apiResults = res.data.map((item, idx) => ({
+            id: item.id,
+            version: `V${res.data.length - idx}.0`,
+            position: item.jobTitle || 'Vị trí ứng tuyển',
+            company: 'Doanh nghiệp ứng tuyển',
+            matchScore: item.matchScore || 85,
+            updatedAt: item.createdAt,
+            status: 'active',
+            cvData: null, // sẽ fetch theo ID khi bấm xem
+          }));
+        }
+      } catch (e) {
+        console.warn('Backend API getCvHistory failed, fallback to localStorage:', e);
       }
-    } catch (e) {
-      console.error('Error loading saved CV history:', e);
+
+      try {
+        const saved = localStorage.getItem('saved_cv_history');
+        const localResults = saved ? JSON.parse(saved) : [];
+
+        // Trộn API results và local results (ưu tiên API, loại bỏ trùng ID)
+        const apiIds = new Set(apiResults.map(a => a.id));
+        const combined = [...apiResults, ...localResults.filter(l => !apiIds.has(l.id))];
+        setCvList(combined);
+      } catch (e) {
+        setCvList(apiResults);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    loadHistory();
   }, []);
+
+  // Handler xem trước CV (fetch full cvData nếu cần)
+  async function handleOpenPreview(id) {
+    setPreviewId(id);
+    const target = cvList.find(c => c.id === id);
+    if (target && !target.cvData) {
+      try {
+        const detail = await getCvById(id);
+        if (detail?.cvData) {
+          setCvList(prev => prev.map(c => c.id === id ? { ...c, cvData: detail.cvData, matchScore: detail.matchScore || c.matchScore } : c));
+        }
+      } catch (err) {
+        console.error('Lỗi khi tải chi tiết CV:', err);
+      }
+    }
+  }
 
   const previewCV = cvList.find((c) => c.id === previewId);
 
@@ -76,6 +121,11 @@ export default function CvHistoryPage() {
   // Tải PDF từ modal hoặc card
   async function handleExportPDF(cvItem) {
     if (!cvItem) return;
+
+    if (!cvItem.cvData) {
+      await handleOpenPreview(cvItem.id);
+    }
+
     const element = document.getElementById(`cv-preview-${cvItem.id}`) || document.getElementById('cv-preview-modal-content');
     if (!element) {
       setPreviewId(cvItem.id);
@@ -110,17 +160,15 @@ export default function CvHistoryPage() {
           <div>
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: 'var(--space-1)' }}>Lịch sử ứng tuyển</h2>
             <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
-              {cvList.filter((c) => c.status === 'active').length} bản CV đã lưu
+              {cvList.filter((c) => c.status !== 'archived').length} bản CV đã lưu
             </p>
           </div>
           {cvList.length > 0 && (
-            <button
-              className="btn btn-primary"
-              onClick={() => (window.location.href = '/cv-workspace')}
-              style={{ fontSize: '13px' }}
-            >
-              + Tạo CV mới
-            </button>
+            <Link href="/cv-workspace">
+              <button className="btn btn-primary" style={{ fontSize: '13px' }}>
+                + Tạo CV mới
+              </button>
+            </Link>
           )}
         </div>
 
@@ -131,7 +179,7 @@ export default function CvHistoryPage() {
               title="Chưa có lịch sử ứng tuyển nào"
               description="Hãy tạo CV đầu tiên tại Không gian tạo CV, sau đó bấm 'Lưu CV vào Lịch sử' để quản lý các bản CV tại đây."
               actionLabel="Tạo CV ngay"
-              onAction={() => (window.location.href = '/cv-workspace')}
+              onAction={() => router.push('/cv-workspace')}
             />
           </div>
         ) : (
@@ -231,7 +279,7 @@ export default function CvHistoryPage() {
                   </div>
 
                   <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                    <IconBtn icon={<Eye size={14} />} title="Xem CV" onClick={() => setPreviewId(cv.id)} />
+                    <IconBtn icon={<Eye size={14} />} title="Xem CV" onClick={() => handleOpenPreview(cv.id)} />
                     <IconBtn icon={<Download size={14} />} title="Tải PDF" onClick={() => handleExportPDF(cv)} />
                   </div>
                 </div>

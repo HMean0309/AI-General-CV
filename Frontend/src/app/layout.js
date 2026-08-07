@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 export const metadata = {
   title: 'AIGeneralCV - Hệ thống tối ưu CV thông minh',
   description:
-    'Hệ thống quản lý hồ sơ năng lực và tự động tối ưu hóa CV theo Job Description dành cho sinh viên, sử dụng Trí tuệ nhân tạo.',
+    'Hệ thống quản lý hồ sơ sinh viên và tự động tối ưu hóa CV theo Job Description dành cho sinh viên, sử dụng Trí tuệ nhân tạo.',
 };
 
 export default function RootLayout({ children }) {
@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
             {children}

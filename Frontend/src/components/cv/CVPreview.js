@@ -49,16 +49,16 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginTop: 8, paddingBottom: 6, fontSize: '9.5pt', color: '#333333' }}>
           {personalInfo.email && (
-            <span>✉ {personalInfo.email}</span>
+            <span><strong>Email:</strong> {personalInfo.email}</span>
           )}
           {personalInfo.phone && (
-            <span>☎ {personalInfo.phone}</span>
+            <span><strong>SĐT:</strong> {personalInfo.phone}</span>
           )}
           {(personalInfo.linkedin || personalInfo.linkedIn) && (
-            <span>🔗 {personalInfo.linkedin || personalInfo.linkedIn}</span>
+            <span><strong>LinkedIn:</strong> {personalInfo.linkedin || personalInfo.linkedIn}</span>
           )}
           {personalInfo.github && (
-            <span>⌂ {personalInfo.github}</span>
+            <span><strong>GitHub:</strong> {personalInfo.github}</span>
           )}
         </div>
         {/* Đường kẻ phân cách Header - có khoảng cách rõ ràng */}
