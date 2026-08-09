@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
 import EmptyState from '@/components/ui/EmptyState';
 import CVPreview from '@/components/cv/CVPreview';
-import { getCvHistory, getCvById } from '@/services/cvService';
+import { getCvHistory, getCvById, deleteCvApi } from '@/services/cvService';
 import {
   Eye, Download, Copy, Archive, FileText, Trash2,
   Calendar, Building2, Briefcase, X, MoreHorizontal,
@@ -84,14 +84,26 @@ export default function CvHistoryPage() {
     localStorage.setItem('saved_cv_history', JSON.stringify(newList));
   }
 
-  // Xóa CV
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  // Mở modal xác nhận xóa
   function handleDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa bản CV này khỏi lịch sử?')) {
-      const newList = cvList.filter((c) => c.id !== id);
-      updateCvList(newList);
-      setActiveMenu(null);
-      if (previewId === id) setPreviewId(null);
+    setActiveMenu(null);
+    setDeleteConfirmId(id);
+  }
+
+  // Thực thi xóa CV triệt để từ cả API Backend & LocalStorage
+  async function confirmDelete(id) {
+    if (!id) return;
+    try {
+      await deleteCvApi(id).catch(() => {});
+    } catch (err) {
+      console.error('Lỗi khi xóa CV khỏi API:', err);
     }
+    const newList = cvList.filter((c) => c.id !== id);
+    updateCvList(newList);
+    setDeleteConfirmId(null);
+    if (previewId === id) setPreviewId(null);
   }
 
   // Lưu trữ / Khôi phục
@@ -214,7 +226,7 @@ export default function CvHistoryPage() {
                     </div>
                     <div>
                       <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                        Phiên bản {cv.version}
+                        {cv.version}
                       </span>
                       {cv.status === 'archived' && (
                         <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginLeft: 'var(--space-2)' }}>
@@ -248,8 +260,6 @@ export default function CvHistoryPage() {
                             animation: 'fadeIn 0.15s ease-out',
                           }}
                         >
-                          <MenuBtn icon={<Copy size={14} />} label="Sao chép phiên bản" onClick={() => handleDuplicate(cv.id)} />
-                          <MenuBtn icon={<Archive size={14} />} label={cv.status === 'archived' ? 'Khôi phục' : 'Lưu trữ'} onClick={() => handleArchive(cv.id)} />
                           <MenuBtn icon={<Trash2 size={14} style={{ color: 'var(--color-danger)' }} />} label="Xóa bản CV" danger onClick={() => handleDelete(cv.id)} />
                         </div>
                       </>
@@ -287,70 +297,123 @@ export default function CvHistoryPage() {
             ))}
           </div>
         )}
+      </div>
 
-        {/* Modal xem CV chi tiết */}
-        {previewCV && (
-          <>
-            <div
-              style={{
-                position: 'fixed', inset: 0, zIndex: 100,
-                background: 'rgba(0,0,0,0.5)',
-                backdropFilter: 'blur(4px)',
-              }}
-              onClick={() => setPreviewId(null)}
-            />
-            <div
-              className="fade-in"
-              style={{
-                position: 'fixed', top: '50%', left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 101,
-                background: 'var(--color-surface)',
-                borderRadius: 'var(--radius-xl)',
-                boxShadow: 'var(--shadow-xl)',
-                padding: 'var(--space-6)',
-                maxWidth: 900, width: '95%', maxHeight: '90vh',
-                display: 'flex', flexDirection: 'column',
-              }}
-            >
-              {/* Header Modal */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)', paddingBottom: 'var(--space-3)', borderBottom: '1px solid var(--color-border)' }}>
-                <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>
-                    Chi tiết CV — {previewCV.version} ({previewCV.position})
-                  </h3>
-                  <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>
-                    Tạo ngày: {formatDate(previewCV.updatedAt)} • Độ khớp: {previewCV.matchScore}%
-                  </p>
-                </div>
-                <button
-                  onClick={() => setPreviewId(null)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 4 }}
-                >
-                  <X size={20} />
-                </button>
+      {/* Modal xem CV chi tiết */}
+      {previewCV && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 'var(--space-4)',
+          }}
+        >
+          <div
+            style={{
+              position: 'fixed', inset: 0,
+              background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+            }}
+            onClick={() => setPreviewId(null)}
+          />
+          <div
+            className="fade-in"
+            style={{
+              position: 'relative', zIndex: 1,
+              background: 'var(--color-surface)',
+              borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-xl)',
+              padding: 'var(--space-6)',
+              maxWidth: 900, width: '95%', maxHeight: '90vh',
+              display: 'flex', flexDirection: 'column',
+            }}
+          >
+            {/* Header Modal */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)', paddingBottom: 'var(--space-3)', borderBottom: '1px solid var(--color-border)' }}>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>
+                  Chi tiết CV — {previewCV.version} ({previewCV.position})
+                </h3>
+                <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>
+                  Tạo ngày: {formatDate(previewCV.updatedAt)} • Độ khớp: {previewCV.matchScore}%
+                </p>
               </div>
+              <button
+                onClick={() => setPreviewId(null)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 4 }}
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-              {/* Body Modal (Chứa CVPreview A4) */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-4) 0', display: 'flex', justifyContent: 'center', background: '#F8FAFC', borderRadius: 'var(--radius-md)' }}>
-                <div id="cv-preview-modal-content">
-                  <CVPreview cvData={previewCV.cvData} targetRole={previewCV.targetRole || previewCV.position} />
-                </div>
-              </div>
-
-              {/* Footer Modal */}
-              <div style={{ marginTop: 'var(--space-4)', display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)' }}>
-                <button className="btn btn-outline" onClick={() => setPreviewId(null)} style={{ fontSize: '13px' }}>
-                  Đóng
-                </button>
-                <button className="btn btn-success" onClick={() => handleExportPDF(previewCV)} style={{ fontSize: '13px', fontWeight: 600 }}>
-                  <Download size={14} /> Tải PDF
-                </button>
+            {/* Body Modal (Chứa CVPreview A4) */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-4) 0', display: 'flex', justifyContent: 'center', background: '#F8FAFC', borderRadius: 'var(--radius-md)' }}>
+              <div id="cv-preview-modal-content">
+                <CVPreview cvData={previewCV.cvData} targetRole={previewCV.targetRole || previewCV.position} />
               </div>
             </div>
-          </>
-        )}
-      </div>
+
+            {/* Footer Modal */}
+            <div style={{ marginTop: 'var(--space-4)', display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)' }}>
+              <button className="btn btn-outline" onClick={() => setPreviewId(null)} style={{ fontSize: '13px' }}>
+                Đóng
+              </button>
+              <button className="btn btn-success" onClick={() => handleExportPDF(previewCV)} style={{ fontSize: '13px', fontWeight: 600 }}>
+                <Download size={14} /> Tải PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Xác nhận Xóa CV */}
+      {deleteConfirmId && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 'var(--space-4)',
+          }}
+        >
+          <div
+            style={{
+              position: 'fixed', inset: 0,
+              background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+            }}
+            onClick={() => setDeleteConfirmId(null)}
+          />
+          <div
+            className="fade-in"
+            style={{
+              position: 'relative', zIndex: 1,
+              width: '90%', maxWidth: 420, background: 'var(--color-surface)',
+              borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-xl)',
+              border: '1px solid var(--color-border)', padding: 'var(--space-6)',
+            }}
+          >
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
+              Xác nhận xóa bản CV
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
+              Bạn có chắc chắn muốn xóa bản CV này khỏi lịch sử ứng tuyển không? Hành động này sẽ xóa vĩnh viễn dữ liệu.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)' }}>
+              <button
+                className="btn btn-outline"
+                onClick={() => setDeleteConfirmId(null)}
+                style={{ fontSize: '13px' }}
+              >
+                Hủy
+              </button>
+              <button
+                className="btn"
+                onClick={() => confirmDelete(deleteConfirmId)}
+                style={{ fontSize: '13px', fontWeight: 600, background: 'var(--color-danger)', color: 'white' }}
+              >
+                Xóa ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }

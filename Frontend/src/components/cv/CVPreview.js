@@ -55,9 +55,6 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
           {personalInfo.phone && (
             <span><strong>SĐT:</strong> {personalInfo.phone}</span>
           )}
-          {(personalInfo.linkedin || personalInfo.linkedIn) && (
-            <span><strong>LinkedIn:</strong> {personalInfo.linkedin || personalInfo.linkedIn}</span>
-          )}
           {personalInfo.github && (
             <span><strong>GitHub:</strong> {personalInfo.github}</span>
           )}

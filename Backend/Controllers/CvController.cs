@@ -73,6 +73,9 @@ namespace TayDoApi.Controllers
                 {
                     st.Id,
                     us.FullName,
+                    Email = st.Email ?? us.UserName,
+                    us.Mobile,
+                    st.GithubUrl,
                     MajorName = mj.Name,
                 }
             ).FirstOrDefaultAsync();
@@ -145,19 +148,55 @@ namespace TayDoApi.Controllers
             // 7. Gọi FastAPI AI Engine
             var aiResponse = await _aiEngineService.GenerateCvAsync(aiRequest);
 
-            // 8. Lưu kết quả nguyên khối JSON vào SQL Server (bảng GeneratedCVs)
+            // Ghi đè thông tin liên hệ thực tế của sinh viên vào kết quả AI
+            if (aiResponse?.CvData?.PersonalInfo != null)
+            {
+                if (!string.IsNullOrWhiteSpace(studentProfile.FullName))
+                    aiResponse.CvData.PersonalInfo.FullName = studentProfile.FullName;
+
+                if (!string.IsNullOrWhiteSpace(studentProfile.Email))
+                    aiResponse.CvData.PersonalInfo.Email = studentProfile.Email;
+
+                if (!string.IsNullOrWhiteSpace(studentProfile.Mobile))
+                    aiResponse.CvData.PersonalInfo.Phone = studentProfile.Mobile;
+
+                if (!string.IsNullOrWhiteSpace(studentProfile.GithubUrl))
+                    aiResponse.CvData.PersonalInfo.Github = studentProfile.GithubUrl;
+
+                // Xóa LinkedIn khỏi CV output
+                aiResponse.CvData.PersonalInfo.Linkedin = null;
+            }
+
+            // 8. Trả kết quả JSON xem trước về cho Frontend (Không tự động lưu vào DB)
+            return Ok(aiResponse);
+        }
+
+        /// <summary>
+        /// POST /api/cv/save — Lưu bản CV chủ động từ người dùng vào Lịch sử ứng tuyển (SQL Server)
+        /// </summary>
+        [HttpPost("save")]
+        public async Task<IActionResult> SaveCv([FromBody] SaveCvRequestDto request)
+        {
+            var ownStudent = await _context.Students.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.UserId == CurrentUserId && !s.IsDeleted);
+
+            if (ownStudent == null)
+            {
+                return NotFound(new { message = "Không tìm thấy hồ sơ sinh viên." });
+            }
+
             var jsonOptions = new JsonSerializerOptions { WriteIndented = false };
-            var cvJson = JsonSerializer.Serialize(aiResponse, jsonOptions);
+            var cvJson = JsonSerializer.Serialize(request.CvData, jsonOptions);
 
             var generatedCvRecord = new GeneratedCVs
             {
                 Id = Guid.NewGuid(),
-                StudentId = targetStudentId,
-                JobTitle = request.TargetRole,
-                RawJobDescription = request.JobDescription,
-                MatchScore = aiResponse.MatchScore,
+                StudentId = ownStudent.Id,
+                JobTitle = request.TargetRole ?? "Vị trí ứng tuyển",
+                RawJobDescription = request.JobDescription ?? "",
+                MatchScore = request.MatchScore > 0 ? request.MatchScore : 85,
                 CvDataJson = cvJson,
-                IsFallback = aiResponse.Meta.IsFallback,
+                IsFallback = false,
                 CreatedAt = DateTime.UtcNow,
                 IsDeleted = false
             };
@@ -165,8 +204,29 @@ namespace TayDoApi.Controllers
             _context.GeneratedCVs.Add(generatedCvRecord);
             await _context.SaveChangesAsync();
 
-            // 9. Trả kết quả JSON về cho Frontend
-            return Ok(aiResponse);
+            return Ok(new
+            {
+                message = "Đã lưu CV vào lịch sử thành công.",
+                id = generatedCvRecord.Id,
+                createdAt = generatedCvRecord.CreatedAt
+            });
+        }
+
+        /// <summary>
+        /// DELETE /api/cv/{id} — Xóa bản CV khỏi lịch sử (Soft delete)
+        /// </summary>
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteCv(Guid id)
+        {
+            var record = await _context.GeneratedCVs
+                .FirstOrDefaultAsync(cv => cv.Id == id && !cv.IsDeleted);
+
+            if (record == null) return NotFound(new { message = "Không tìm thấy bản CV." });
+
+            record.IsDeleted = true;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Đã xóa bản CV thành công." });
         }
 
         /// <summary>

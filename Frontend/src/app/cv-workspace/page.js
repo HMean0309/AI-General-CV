@@ -16,7 +16,8 @@ import {
   AlertTriangle, Share2, FileDown, Download, Save,
   Check, Loader2, RefreshCw, ChevronRight, X, Paperclip, Edit3, Eye,
 } from 'lucide-react';
-import { generateCV, parseJdFile } from '@/services/cvService';
+import { generateCV, saveCv, parseJdFile } from '@/services/cvService';
+import { getStudents } from '@/services/studentService';
 
 export default function CvWorkspacePage() {
   const { user } = useAuth();
@@ -27,13 +28,39 @@ export default function CvWorkspacePage() {
   const [attachedFile, setAttachedFile] = useState(null);
   const [fileParseLoading, setFileParseLoading] = useState(false);
   const [fileParseError, setFileParseError] = useState('');
+  const [studentInfo, setStudentInfo] = useState(null);
 
   // Tab switch cho Mobile Editing state ('editor' | 'preview')
   const [mobileTab, setMobileTab] = useState('editor');
 
-  // Lưu CV vào Lịch sử ứng tuyển (localStorage)
-  function handleSaveCV() {
+  // Lấy thông tin sinh viên thực tế từ DB khi mount
+  useEffect(() => {
+    async function loadStudentInfo() {
+      if (!user?.id) return;
+      try {
+        const res = await getStudents({ userId: user.id });
+        if (res.data?.[0]) {
+          setStudentInfo(res.data[0]);
+        }
+      } catch (err) {
+        console.error('Không thể lấy thông tin sinh viên:', err);
+      }
+    }
+    loadStudentInfo();
+  }, [user]);
+
+  // Lưu CV vào Lịch sử ứng tuyển (gọi API + localStorage)
+  async function handleSaveCV() {
     try {
+      // 1. Gọi Backend API lưu CV vào DB
+      await saveCv({
+        targetRole: store.targetRole || 'Vị trí ứng tuyển',
+        jobDescription: store.jobDescription || '',
+        matchScore: store.matchScore || 85,
+        cvData: store.cvData,
+      }).catch((err) => console.warn('Lỗi khi gọi API saveCv:', err));
+
+      // 2. Cập nhật localStorage dự phòng
       const existingHistory = JSON.parse(localStorage.getItem('saved_cv_history') || '[]');
       const newVersionNum = existingHistory.length + 1;
       const newCvItem = {
@@ -84,13 +111,26 @@ export default function CvWorkspacePage() {
       if (result) {
         const updatedData = { ...result.cvData };
         if (user) {
+          const userPhone = user.mobile || user.phoneNumber || user.phone || studentInfo?.phone || '';
+          const userEmail = studentInfo?.email || user.email || '';
+          const userGithub = studentInfo?.githubUrl || user.githubUrl || '';
+
+          const aiPhone = updatedData.personalInfo?.phone || '';
+          const isMockPhone = !aiPhone || aiPhone.includes('xxx') || aiPhone === '0909090909';
+
+          const aiEmail = updatedData.personalInfo?.email || '';
+          const isMockEmail = !aiEmail || aiEmail.includes('email.com') || aiEmail === 'nguyenvantest@email.com';
+
+          const aiGithub = updatedData.personalInfo?.github || '';
+          const isMockGithub = !aiGithub || aiGithub.includes('nguyenvantest');
+
           updatedData.personalInfo = {
             ...updatedData.personalInfo,
-            fullName: user.fullName || updatedData.personalInfo?.fullName || 'Nguyễn Văn Test',
-            email: user.email || updatedData.personalInfo?.email || 'nguyenvantest@email.com',
-            phone: user.phoneNumber || updatedData.personalInfo?.phone || '0909090909',
-            github: updatedData.personalInfo?.github || 'github.com/nguyenvantest',
-            linkedin: updatedData.personalInfo?.linkedin || updatedData.personalInfo?.linkedIn || 'linkedin.com/in/nguyenvantest',
+            fullName: user.fullName || studentInfo?.fullName || updatedData.personalInfo?.fullName || 'Nguyễn Văn Test',
+            email: userEmail || (isMockEmail ? '' : aiEmail),
+            phone: userPhone || (isMockPhone ? '' : aiPhone),
+            github: userGithub || (isMockGithub ? '' : aiGithub),
+            linkedin: null,
           };
         }
         store.setCvResult({ ...result, cvData: updatedData });
@@ -600,7 +640,10 @@ export default function CvWorkspacePage() {
               </div>
 
               {/* Bên phải: CV Preview A4 */}
-              <div className={`preview-panel-col ${mobileTab === 'editor' ? 'hide-on-mobile' : ''}`}>
+              <div
+                className={`preview-panel-col ${mobileTab === 'editor' ? 'hide-on-mobile' : ''}`}
+                style={{ display: 'flex', flexDirection: 'column' }}
+              >
                 {saveMsg && (
                   <div
                     className="fade-in"

@@ -33,7 +33,7 @@ namespace TayDoApi.Models
         public string? PreviousOccupation { get; set; }
         public string? PostGraduationWorkplace { get; set; }
         public string? GithubUrl { get; set; }
-        public string? LinkedinUrl { get; set; }
+        public string? Email { get; set; }
         public DateTime? CommunistPartyJoinDate { get; set; }
         public DateTime? OfficialPartyJoinDate { get; set; }
         public DateTime? YouthUnionJoinDate { get; set; }

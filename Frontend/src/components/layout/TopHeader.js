@@ -6,9 +6,8 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { LogOut, ChevronDown, Sun, Moon, Menu } from 'lucide-react';
+import { LogOut, ChevronDown, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import { ROLE_LABELS } from '@/lib/constants';
 
 // Map pathname → tiêu đề trang
@@ -24,7 +23,6 @@ const PAGE_TITLES = {
 export default function TopHeader({ onMobileToggleMenu = () => {} }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, mounted } = useTheme();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const pageTitle = PAGE_TITLES[pathname] || 'Trang chủ';
@@ -74,36 +72,8 @@ export default function TopHeader({ onMobileToggleMenu = () => {} }) {
         </h2>
       </div>
 
-      {/* Right: Theme Switcher (Desktop Only) + Avatar Dropdown */}
+      {/* Right: Avatar Dropdown */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-        {/* Nút Toggle Dark / Light Theme (Desktop Only — trên Mobile đã chuyển vào chân Nav) */}
-        {mounted && (
-          <button
-            onClick={toggleTheme}
-            className="hide-on-mobile"
-            title={theme === 'dark' ? 'Chuyển sang Giao diện Sáng' : 'Chuyển sang Giao diện Tối'}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 'var(--radius-full)',
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-surface)',
-              color: theme === 'dark' ? '#FBBF24' : 'var(--color-text-secondary)',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 250ms cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: 'var(--shadow-sm)',
-            }}
-          >
-            {theme === 'dark' ? (
-              <Sun size={20} style={{ transition: 'transform 300ms ease' }} />
-            ) : (
-              <Moon size={20} style={{ transition: 'transform 300ms ease' }} />
-            )}
-          </button>
-        )}
-
         {/* User Avatar + Dropdown */}
         <div style={{ position: 'relative' }}>
           <button
@@ -135,11 +105,11 @@ export default function TopHeader({ onMobileToggleMenu = () => {} }) {
             >
               {userInitials}
             </div>
-            <div style={{ textAlign: 'left' }} className="hide-on-mobile">
+            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }} className="hide-on-mobile">
               <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.2, margin: 0 }}>
                 {user?.fullName || 'Người dùng'}
               </p>
-              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.2, margin: 0 }}>
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.2, margin: 0, marginTop: '2px' }}>
                 {ROLE_LABELS[user?.role] || 'Sinh viên'}
               </p>
             </div>

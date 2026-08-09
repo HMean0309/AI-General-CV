@@ -7,6 +7,24 @@ USE TayDoV2;
 GO
 
 -- =========================================================
+-- 0. Migration: Thêm cột Email vào bảng Students
+--    (Thay thế LinkedinUrl — sinh viên ít dùng LinkedIn)
+-- =========================================================
+IF NOT EXISTS (
+    SELECT 1 FROM sys.columns
+    WHERE object_id = OBJECT_ID('dbo.Students') AND name = 'Email'
+)
+BEGIN
+    ALTER TABLE dbo.Students ADD Email NVARCHAR(450) NULL;
+    PRINT N'Đã thêm cột Email vào bảng Students.';
+END
+ELSE
+BEGIN
+    PRINT N'Cột Email đã tồn tại trong bảng Students — bỏ qua.';
+END
+GO
+
+-- =========================================================
 -- 1. Bảng Projects — lưu Kho Đồ án gốc của sinh viên
 -- =========================================================
 IF NOT EXISTS (

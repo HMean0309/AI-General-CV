@@ -263,4 +263,12 @@ namespace TayDoApi.DTOs
         [JsonPropertyName("textLength")]
         public int TextLength { get; set; }
     }
+
+    public class SaveCvRequestDto
+    {
+        public string? TargetRole { get; set; }
+        public string? JobDescription { get; set; }
+        public int MatchScore { get; set; }
+        public object CvData { get; set; } = new();
+    }
 }

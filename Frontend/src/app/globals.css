@@ -405,7 +405,7 @@ small, .text-caption {
 
 /* Hide on mobile / desktop helpers */
 .hide-on-mobile {
-  display: flex;
+  /* Giữ mặc định display của phần tử trên Desktop */
 }
 .show-on-mobile {
   display: none !important;

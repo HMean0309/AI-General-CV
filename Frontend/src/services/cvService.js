@@ -25,6 +25,22 @@ export async function generateCV(payload) {
 }
 
 /**
+ * Lưu CV chủ động vào DB
+ */
+export async function saveCv(payload) {
+  const response = await api.post('/api/cv/save', payload);
+  return response.data;
+}
+
+/**
+ * Xóa 1 bản CV khỏi DB (Soft delete)
+ */
+export async function deleteCvApi(id) {
+  const response = await api.delete(`${CV_ENDPOINTS.DETAIL}/${id}`);
+  return response.data;
+}
+
+/**
  * Lấy danh sách CV đã tạo (phân trang qua custom headers)
  */
 export async function getCvHistory(params = {}) {

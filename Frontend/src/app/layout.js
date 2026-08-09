@@ -1,6 +1,7 @@
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { SidebarProvider } from '@/contexts/SidebarContext';
 
 export const metadata = {
   title: 'AIGeneralCV - Hệ thống tối ưu CV thông minh',
@@ -18,7 +19,9 @@ export default function RootLayout({ children }) {
       <body suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
-            {children}
+            <SidebarProvider>
+              {children}
+            </SidebarProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

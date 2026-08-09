@@ -61,26 +61,24 @@ export default function StudentProfilePage() {
     email: '',
     phone: '',
     githubUrl: '',
-    linkedinUrl: '',
   });
 
   useEffect(() => {
     setInfoForm({
-      email: user?.email || user?.userName || '',
+      email: studentData?.email || user?.email || user?.userName || '',
       phone: user?.mobile || user?.phoneNumber || '',
       githubUrl: studentData?.githubUrl || '',
-      linkedinUrl: studentData?.linkedinUrl || '',
     });
   }, [user, studentData]);
 
   async function handleSaveInfo() {
     try {
-      // 1. Cập nhật Backend cho Student (githubUrl, linkedinUrl)
+      // 1. Cập nhật Backend cho Student (githubUrl, email)
       if (studentData) {
         const updatedStudentPayload = {
           ...studentData,
           githubUrl: infoForm.githubUrl,
-          linkedinUrl: infoForm.linkedinUrl,
+          email: infoForm.email,
         };
         await updateStudent(studentData.id, updatedStudentPayload);
       }
@@ -108,7 +106,7 @@ export default function StudentProfilePage() {
       setStudentData((prev) => ({
         ...(prev || {}),
         githubUrl: infoForm.githubUrl,
-        linkedinUrl: infoForm.linkedinUrl,
+        email: infoForm.email,
       }));
 
       setIsEditingInfo(false);
@@ -345,9 +343,10 @@ export default function StudentProfilePage() {
                           Email
                         </label>
                         <input
-                          type="text"
+                          type="email"
                           className="input-field"
                           value={infoForm.email}
+                          placeholder="email@example.com"
                           onChange={(e) => setInfoForm({ ...infoForm, email: e.target.value })}
                           style={{ fontSize: '13px', padding: '6px 10px' }}
                         />
@@ -374,19 +373,6 @@ export default function StudentProfilePage() {
                           value={infoForm.githubUrl}
                           placeholder="github.com/username"
                           onChange={(e) => setInfoForm({ ...infoForm, githubUrl: e.target.value })}
-                          style={{ fontSize: '13px', padding: '6px 10px' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 2 }}>
-                          LinkedIn URL
-                        </label>
-                        <input
-                          type="text"
-                          className="input-field"
-                          value={infoForm.linkedinUrl}
-                          placeholder="linkedin.com/in/username"
-                          onChange={(e) => setInfoForm({ ...infoForm, linkedinUrl: e.target.value })}
                           style={{ fontSize: '13px', padding: '6px 10px' }}
                         />
                       </div>
@@ -417,7 +403,7 @@ export default function StudentProfilePage() {
                       <InfoRow label="Email" value={infoForm.email} />
                       <InfoRow label="Số điện thoại" value={infoForm.phone} />
                       <InfoRow label="GitHub URL" value={infoForm.githubUrl} />
-                      <InfoRow label="LinkedIn URL" value={infoForm.linkedinUrl} />
+
                       {studentData && (
                         <>
                           <InfoRow label="Giới tính" value={studentData.gender === 0 ? 'Nam' : studentData.gender === 1 ? 'Nữ' : '—'} />

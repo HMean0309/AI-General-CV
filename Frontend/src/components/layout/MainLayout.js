@@ -5,31 +5,23 @@
 // Persist collapse state vào localStorage (sidebar_collapsed)
 // ============================================================
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 import TopHeader from './TopHeader';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 export default function MainLayout({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const { isCollapsed, toggleCollapse } = useSidebar();
   const router = useRouter();
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Đọc trạng thái thu gọn từ localStorage và kiểm tra window width
+  // Kiểm tra window width khi resize
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('sidebar_collapsed');
-      if (saved === 'true') {
-        setIsCollapsed(true);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
     function handleResize() {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
@@ -50,18 +42,7 @@ export default function MainLayout({ children }) {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Toggle thu gọn Desktop & Lưu localStorage
-  const handleToggleCollapse = useCallback(() => {
-    setIsCollapsed((prev) => {
-      const nextState = !prev;
-      try {
-        localStorage.setItem('sidebar_collapsed', String(nextState));
-      } catch (e) {
-        console.error(e);
-      }
-      return nextState;
-    });
-  }, []);
+  const handleToggleCollapse = toggleCollapse;
 
   // Loading state
   if (isLoading) {
