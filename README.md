@@ -120,7 +120,7 @@ uvicorn app.main:app --reload --port 8000
 ### 4. Khởi chạy Backend API (.NET 8)
 ```bash
 # Di chuyển vào thư mục Backend
-cd Backend/Tay_Do_Project
+cd Backend
 
 # Restore packages & chạy dự án:
 dotnet restore
