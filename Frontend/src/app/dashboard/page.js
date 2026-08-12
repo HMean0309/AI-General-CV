@@ -30,6 +30,7 @@ import {
   getStudentEvaluations,
   getEvaluationCriterias,
 } from '@/services/studentService';
+import { getCvHistory } from '@/services/cvService';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -42,6 +43,8 @@ export default function DashboardPage() {
   const [evaluationDetails, setEvaluationDetails] = useState([]);
   const [evaluationCriterias, setEvaluationCriterias] = useState([]);
   const [examMap, setExamMap] = useState({});
+  const [cvCount, setCvCount] = useState(0);
+  const [latestCvTitle, setLatestCvTitle] = useState('');
   const [error, setError] = useState('');
 
   // Fetch dữ liệu khi mount
@@ -58,6 +61,28 @@ export default function DashboardPage() {
       const studentsRes = await getStudents({ userId: user.id });
       const myStudent = studentsRes.data[0] || null;
       setStudentData(myStudent);
+
+      // Fetch lịch sử CV từ Backend API + localStorage dự phòng
+      let apiCvList = [];
+      try {
+        const cvHistoryRes = await getCvHistory(myStudent?.id ? { studentId: myStudent.id } : {});
+        if (cvHistoryRes?.data && Array.isArray(cvHistoryRes.data)) {
+          apiCvList = cvHistoryRes.data;
+        }
+      } catch (cvErr) {
+        console.warn('Lỗi khi gọi API getCvHistory trên Dashboard:', cvErr);
+      }
+
+      let localCvList = [];
+      try {
+        const saved = localStorage.getItem('saved_cv_history');
+        if (saved) localCvList = JSON.parse(saved);
+      } catch (e) {}
+
+      const totalCount = Math.max(apiCvList.length, localCvList.length);
+      setCvCount(totalCount);
+      const latestTitle = apiCvList[0]?.jobTitle || localCvList[0]?.position || (totalCount > 0 ? 'CV mới nhất' : '');
+      setLatestCvTitle(latestTitle);
 
       if (myStudent) {
         // 2. Lọc các bảng liên quan theo studentId trực tiếp tại Database Server
@@ -243,8 +268,8 @@ export default function DashboardPage() {
                 iconColor="var(--color-accent-ai)"
                 iconBg="var(--color-primary-light)"
                 label="CV đã tạo"
-                value="0"
-                subtitle="Chưa xuất bản CV"
+                value={String(cvCount)}
+                subtitle={cvCount > 0 ? (latestCvTitle ? `Gần nhất: ${latestCvTitle}` : `${cvCount} bản ghi`) : 'Chưa xuất bản CV'}
               />
               <KPICard
                 icon={<BookOpen size={22} />}

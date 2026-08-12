@@ -49,22 +49,37 @@ export default function CvWorkspacePage() {
     loadStudentInfo();
   }, [user]);
 
-  // Lưu CV vào Lịch sử ứng tuyển (gọi API + localStorage)
-  async function handleSaveCV() {
-    try {
-      // 1. Gọi Backend API lưu CV vào DB
-      await saveCv({
-        targetRole: store.targetRole || 'Vị trí ứng tuyển',
-        jobDescription: store.jobDescription || '',
-        matchScore: store.matchScore || 85,
-        cvData: store.cvData,
-      }).catch((err) => console.warn('Lỗi khi gọi API saveCv:', err));
+  const [isSaving, setIsSaving] = useState(false);
 
-      // 2. Cập nhật localStorage dự phòng
+  // Lưu CV vào Lịch sử ứng tuyển (gọi API + localStorage với ID khớp để không trùng)
+  async function handleSaveCV() {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      let savedId = null;
+
+      // 1. Gọi Backend API lưu CV vào DB
+      try {
+        const res = await saveCv({
+          targetRole: store.targetRole || 'Vị trí ứng tuyển',
+          jobDescription: store.jobDescription || '',
+          matchScore: store.matchScore || 85,
+          cvData: store.cvData,
+        });
+        if (res?.id) {
+          savedId = res.id;
+        }
+      } catch (err) {
+        console.warn('Lỗi khi gọi API saveCv, chuyển sang lưu dự phòng localStorage:', err);
+      }
+
+      // 2. Cập nhật localStorage dự phòng (sử dụng savedId từ DB nếu có để không bị trùng lặp)
       const existingHistory = JSON.parse(localStorage.getItem('saved_cv_history') || '[]');
+      const finalId = savedId || ('cv_' + Date.now());
       const newVersionNum = existingHistory.length + 1;
+
       const newCvItem = {
-        id: 'cv_' + Date.now(),
+        id: finalId,
         version: `V${newVersionNum}.0`,
         position: store.targetRole || 'Backend Developer Intern',
         company: 'Doanh nghiệp ứng tuyển',
@@ -75,13 +90,16 @@ export default function CvWorkspacePage() {
         status: 'active',
       };
 
-      const updatedHistory = [newCvItem, ...existingHistory];
+      const filteredHistory = existingHistory.filter(item => item.id !== finalId);
+      const updatedHistory = [newCvItem, ...filteredHistory];
       localStorage.setItem('saved_cv_history', JSON.stringify(updatedHistory));
 
       setSaveMsg('Đã lưu CV vào Lịch sử ứng tuyển thành công!');
       setTimeout(() => setSaveMsg(''), 4000);
     } catch (e) {
-      console.error(e);
+      console.error('Lỗi khi lưu CV:', e);
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -678,10 +696,15 @@ export default function CvWorkspacePage() {
                   <button
                     className="btn btn-primary btn-full-mobile"
                     onClick={handleSaveCV}
-                    style={{ fontSize: '13px', fontWeight: 600 }}
+                    disabled={isSaving}
+                    style={{ fontSize: '13px', fontWeight: 600, opacity: isSaving ? 0.7 : 1 }}
                   >
-                    <Save size={15} />
-                    <span>Lưu CV vào Lịch sử</span>
+                    {isSaving ? (
+                      <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />
+                    ) : (
+                      <Save size={15} />
+                    )}
+                    <span>{isSaving ? 'Đang lưu CV...' : 'Lưu CV vào Lịch sử'}</span>
                   </button>
                   <button
                     className="btn btn-success btn-full-mobile"

@@ -1,10 +1,4 @@
 'use client';
-// ============================================================
-// SidebarContext - Quản lý trạng thái thu gọn Sidebar
-// Persist trạng thái vào localStorage ('sidebar_collapsed')
-// Duy trì trạng thái liên tục khi chuyển giữa các trang
-// ============================================================
-
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const SidebarContext = createContext();
