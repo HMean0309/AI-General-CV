@@ -67,8 +67,22 @@ export default function CvHistoryPage() {
     if (target && !target.cvData) {
       try {
         const detail = await getCvById(id);
-        if (detail?.cvData) {
-          setCvList(prev => prev.map(c => c.id === id ? { ...c, cvData: detail.cvData, matchScore: detail.matchScore || c.matchScore } : c));
+        // Backend GetById trả về AiEngineCvResponseDto (có thể chứa cvData bọc ngoài,
+        // hoặc chính nó là cvData nếu CvDataJson lưu trực tiếp object cvData)
+        let resolvedCvData = null;
+        let resolvedMatchScore = target.matchScore;
+
+        if (detail?.cvData && detail.cvData.personalInfo) {
+          // Trường hợp 1: Response bọc { cvData: { personalInfo, ... }, matchScore }
+          resolvedCvData = detail.cvData;
+          resolvedMatchScore = detail.matchScore || resolvedMatchScore;
+        } else if (detail?.personalInfo) {
+          // Trường hợp 2: Response chính là object cvData (personalInfo ở root level)
+          resolvedCvData = detail;
+        }
+
+        if (resolvedCvData) {
+          setCvList(prev => prev.map(c => c.id === id ? { ...c, cvData: resolvedCvData, matchScore: resolvedMatchScore } : c));
         }
       } catch (err) {
         console.error('Lỗi khi tải chi tiết CV:', err);

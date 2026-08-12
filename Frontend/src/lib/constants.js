@@ -5,18 +5,18 @@
 
 // --- Bảng Màu (Color Palette) ---
 export const COLORS = {
-  primary: '#3B82F6',       
-  secondary: '#1E293B',     
-  accentAi: '#4F46E5',      
-  success: '#10B981',        
-  warning: '#F59E0B',        
-  danger: '#EF4444',         
-  background: '#F8FAFC',     
-  surface: '#FFFFFF',        
-  textPrimary: '#1E293B',    
-  textSecondary: '#475569',  
-  textMuted: '#94A3B8',      
-  border: '#E2E8F0',         
+  primary: '#3B82F6',
+  secondary: '#1E293B',
+  accentAi: '#4F46E5',
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#EF4444',
+  background: '#F8FAFC',
+  surface: '#FFFFFF',
+  textPrimary: '#1E293B',
+  textSecondary: '#475569',
+  textMuted: '#94A3B8',
+  border: '#E2E8F0',
 };
 
 // --- API Endpoints ---
@@ -66,6 +66,6 @@ export const SIDEBAR_ITEMS = [
   { key: 'profile', label: 'Hồ sơ sinh viên', icon: 'UserCheck', href: '/student/profile' },
   { key: 'cv-workspace', label: 'Không gian tạo CV', icon: 'FileSpreadsheet', href: '/cv-workspace' },
   { key: 'cv-history', label: 'Lịch sử ứng tuyển', icon: 'ClipboardList', href: '/cv-history' },
-  { key: 'admin', label: 'Quản trị hệ thống', icon: 'ShieldCheck', href: '/test-data', adminOnly: true },
+  { key: 'admin', label: 'Quản trị hệ thống', icon: 'ShieldCheck', href: '/admin', adminOnly: true },
   { key: 'settings', label: 'Cài đặt', icon: 'Settings', href: '/settings' },
 ];

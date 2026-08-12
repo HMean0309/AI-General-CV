@@ -36,7 +36,7 @@ export function StudentsTable({ data, offset, rawUsers, getMajorName }) {
             return (
               <tr key={st.id} style={trStyle} onMouseEnter={trHoverIn} onMouseLeave={trHoverOut}>
                 <td style={tdStyle}>{offset + idx + 1}</td>
-                <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--color-secondary)' }}>
+                <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)' }}>
                   {userDetail?.fullName || '—'}
                 </td>
                 <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>

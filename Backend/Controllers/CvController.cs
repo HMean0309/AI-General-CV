@@ -260,6 +260,10 @@ namespace TayDoApi.Controllers
 
         /// <summary>
         /// GET /api/cv/{id} — Đọc chi tiết 1 bản CV cũ từ DB (không tốn token sinh lại)
+        /// Xử lý 2 định dạng lưu trữ CvDataJson:
+        ///   - Format A (wrapped): { matchScore, cvData: { personalInfo, ... } }
+        ///   - Format B (raw):     { personalInfo, summary, skills, ... }
+        /// Luôn trả về dạng { cvData: {...}, matchScore } cho Frontend.
         /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
@@ -269,8 +273,34 @@ namespace TayDoApi.Controllers
 
             if (record == null) return NotFound(new { message = "Không tìm thấy CV." });
 
-            var cvResponse = JsonSerializer.Deserialize<AiEngineCvResponseDto>(record.CvDataJson);
-            return Ok(cvResponse);
+            // Thử deserialize dạng wrapped (AiEngineCvResponseDto) trước
+            try
+            {
+                var wrapped = JsonSerializer.Deserialize<AiEngineCvResponseDto>(record.CvDataJson);
+                if (wrapped?.CvData?.PersonalInfo != null
+                    && !string.IsNullOrWhiteSpace(wrapped.CvData.PersonalInfo.FullName))
+                {
+                    return Ok(wrapped);
+                }
+            }
+            catch { /* JSON không khớp format wrapped, thử format raw */ }
+
+            // Fallback: CvDataJson lưu trực tiếp object cvData (không bọc ngoài)
+            try
+            {
+                var rawCvData = JsonSerializer.Deserialize<CvDataDto>(record.CvDataJson);
+                return Ok(new
+                {
+                    matchScore = record.MatchScore,
+                    missingKeywords = new List<string>(),
+                    cvData = rawCvData,
+                    warnings = new List<string>(),
+                });
+            }
+            catch
+            {
+                return Ok(new { cvData = (object?)null, matchScore = record.MatchScore });
+            }
         }
 
         /// <summary>
