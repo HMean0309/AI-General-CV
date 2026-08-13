@@ -194,7 +194,7 @@ namespace TayDoApi.Controllers
                 StudentId = ownStudent.Id,
                 JobTitle = request.TargetRole ?? "Vị trí ứng tuyển",
                 RawJobDescription = request.JobDescription ?? "",
-                MatchScore = request.MatchScore > 0 ? request.MatchScore : 85,
+                MatchScore = request.MatchScore >= 0 ? request.MatchScore : 85,
                 CvDataJson = cvJson,
                 IsFallback = false,
                 CreatedAt = DateTime.UtcNow,

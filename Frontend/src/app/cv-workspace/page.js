@@ -1,10 +1,4 @@
 'use client';
-// ============================================================
-// CV Workspace - Không gian tạo CV (Split Screen & Mobile Tab Switcher)
-// 3 Trạng thái: Input → Processing → Editing
-// Tối ưu hóa 100% cho Desktop & Mobile / Tablet
-// ============================================================
-
 import { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import CVPreview from '@/components/cv/CVPreview';
@@ -63,7 +57,7 @@ export default function CvWorkspacePage() {
         const res = await saveCv({
           targetRole: store.targetRole || 'Vị trí ứng tuyển',
           jobDescription: store.jobDescription || '',
-          matchScore: store.matchScore || 85,
+          matchScore: typeof store.matchScore === 'number' ? store.matchScore : 85,
           cvData: store.cvData,
         });
         if (res?.id) {
@@ -83,7 +77,7 @@ export default function CvWorkspacePage() {
         version: `V${newVersionNum}.0`,
         position: store.targetRole || 'Backend Developer Intern',
         company: 'Doanh nghiệp ứng tuyển',
-        matchScore: store.matchScore || 85,
+        matchScore: typeof store.matchScore === 'number' ? store.matchScore : 85,
         cvData: store.cvData,
         targetRole: store.targetRole,
         updatedAt: new Date().toISOString(),

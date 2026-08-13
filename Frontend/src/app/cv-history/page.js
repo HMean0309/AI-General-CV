@@ -32,7 +32,7 @@ export default function CvHistoryPage() {
             version: `V${res.data.length - idx}.0`,
             position: item.jobTitle || 'Vị trí ứng tuyển',
             company: 'Doanh nghiệp ứng tuyển',
-            matchScore: item.matchScore || 85,
+            matchScore: typeof item.matchScore === 'number' ? item.matchScore : 85,
             updatedAt: item.createdAt,
             status: 'active',
             cvData: null, // sẽ fetch theo ID khi bấm xem
@@ -75,7 +75,7 @@ export default function CvHistoryPage() {
         if (detail?.cvData && detail.cvData.personalInfo) {
           // Trường hợp 1: Response bọc { cvData: { personalInfo, ... }, matchScore }
           resolvedCvData = detail.cvData;
-          resolvedMatchScore = detail.matchScore || resolvedMatchScore;
+          resolvedMatchScore = typeof detail.matchScore === 'number' ? detail.matchScore : resolvedMatchScore;
         } else if (detail?.personalInfo) {
           // Trường hợp 2: Response chính là object cvData (personalInfo ở root level)
           resolvedCvData = detail;
@@ -294,8 +294,8 @@ export default function CvHistoryPage() {
                 {/* Footer: Match score + Date + Actions */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border-light)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                    <span className="badge badge-success" style={{ fontWeight: 600 }}>
-                      {cv.matchScore || 85}% Khớp
+                    <span className={`badge ${cv.matchScore >= 70 ? 'badge-success' : cv.matchScore >= 40 ? 'badge-warning' : 'badge-warning'}`} style={{ fontWeight: 600 }}>
+                      {typeof cv.matchScore === 'number' ? cv.matchScore : 85}% Khớp
                     </span>
                     <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <Calendar size={12} /> {formatDate(cv.updatedAt)}

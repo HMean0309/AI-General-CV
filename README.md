@@ -148,4 +148,7 @@ npm run dev
 - **Tên đăng nhập**: sv_test_full
 - **Mật khẩu**: 123456
 
+- **Tên đăng nhập**: admin_test
+- **Mật khẩu**: 123456
+
 ### Lưu ý: Dữ liệu trong src code hoàn toàn chỉ là table và dữ liệu sinh viên để test không hoàn toàn full dữ liệu các table trong DB do github giới hạn 100mb nên có thể nhấn vào link dưới đây để tải file [.bak backup DB](https://drive.google.com/file/d/1_WfH6IcmPmYo91JHE_73yPfSAYaOm7Mf/view?usp=sharing) backup DB được dùng để test full chức năng
