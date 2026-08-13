@@ -1,9 +1,3 @@
-// ============================================================
-// CV Store - Zustand
-// Quản lý state workspace CV: input → processing → editing
-// Đồng bộ real-time giữa panel chỉnh sửa ↔ CV preview
-// ============================================================
-
 import { create } from 'zustand';
 
 const initialCvData = {
@@ -40,6 +34,7 @@ const useCvStore = create((set, get) => ({
   cvData: { ...initialCvData },
   matchScore: 0,
   missingKeywords: [],
+  scoreBreakdown: null,
   processingSteps: [],
 
   // --- Template ---
@@ -83,6 +78,7 @@ const useCvStore = create((set, get) => ({
       cvData: data.cvData || initialCvData,
       matchScore: data.matchScore || 0,
       missingKeywords: data.missingKeywords || [],
+      scoreBreakdown: data.scoreBreakdown || null,
     }),
 
   // Cập nhật 1 field trong CV data (real-time sync)
@@ -117,6 +113,7 @@ const useCvStore = create((set, get) => ({
       cvData: { ...initialCvData },
       matchScore: 0,
       missingKeywords: [],
+      scoreBreakdown: null,
       processingSteps: [],
     }),
 }));

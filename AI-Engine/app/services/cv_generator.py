@@ -19,6 +19,7 @@ from app.schemas.response import (
     GenerateCvResponse,
     CvData,
     ResponseMeta,
+    ScoreBreakdown,
 )
 from app.services import (
     preprocessing,
@@ -79,13 +80,15 @@ async def generate_cv(request: GenerateCvRequest) -> GenerateCvResponse:
         match_score = 0
         missing_keywords = []
         student_skills = []
+        score_breakdown = ScoreBreakdown()
     else:
         # Extract skills and calculate match
         student_skills = matching_service.extract_student_skills(context)
         jd_keywords = matching_service.extract_jd_keywords(sanitized_jd)
-        match_score, missing_keywords = matching_service.calculate_match(
-            student_skills, jd_keywords
+        match_score, missing_keywords, breakdown_dict = matching_service.calculate_match(
+            student_skills, jd_keywords, academic_context=context
         )
+        score_breakdown = ScoreBreakdown(**breakdown_dict)
 
     # ──────────────────────────────────────────────────────
     # STEP 3: Prompt Generation
@@ -115,6 +118,8 @@ async def generate_cv(request: GenerateCvRequest) -> GenerateCvResponse:
         full_name=context.full_name,
         major=context.major,
         gpa=context.gpa,
+        projects=context.projects,
+        certificates=context.certificates,
     )
     all_warnings.extend(llm_warnings)
 
@@ -135,7 +140,11 @@ async def generate_cv(request: GenerateCvRequest) -> GenerateCvResponse:
             f"Dữ liệu từ {provider} không hợp lệ, sử dụng dữ liệu mẫu."
         )
         mock_data = llm_router.generate_mock_data(
-            context.full_name, context.major, context.gpa
+            context.full_name,
+            context.major,
+            context.gpa,
+            projects=context.projects,
+            certificates=context.certificates,
         )
         cv_data = CvData.model_validate(mock_data)
         provider = "mock"
@@ -149,6 +158,7 @@ async def generate_cv(request: GenerateCvRequest) -> GenerateCvResponse:
         matchScore=match_score,
         missingKeywords=missing_keywords,
         cvData=cv_data,
+        scoreBreakdown=score_breakdown,
         warnings=all_warnings,
         meta=ResponseMeta(
             requestId=request_id,

@@ -86,6 +86,17 @@ class ResponseMeta(BaseCamelModel):
     isFallback: bool
 
 
+class ScoreBreakdown(BaseCamelModel):
+    """
+    Multi-Dimensional Scoring Model — 4 Trụ cột đánh giá.
+    Mỗi trụ cột là điểm 0–100, trọng số được áp dụng khi tính matchScore tổng.
+    """
+    technicalSkillScore: int = Field(0, ge=0, le=100, description="Trọng số 35% — Kỹ năng kỹ thuật khớp JD")
+    projectRelevanceScore: int = Field(0, ge=0, le=100, description="Trọng số 30% — Độ phù hợp Đồ án/Dự án")
+    academicPloScore: int = Field(0, ge=0, le=100, description="Trọng số 20% — Điểm học tập & PLO liên quan")
+    softSkillCertScore: int = Field(0, ge=0, le=100, description="Trọng số 15% — Chứng chỉ & Kỹ năng mềm")
+
+
 class GenerateCvResponse(BaseCamelModel):
     """
     Top-level response for the CV generation endpoint.
@@ -94,5 +105,7 @@ class GenerateCvResponse(BaseCamelModel):
     matchScore: int = Field(..., ge=0, le=100)
     missingKeywords: List[str]
     cvData: CvData
+    scoreBreakdown: Optional[ScoreBreakdown] = None
     warnings: List[str] = []
     meta: ResponseMeta
+

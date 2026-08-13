@@ -24,10 +24,10 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
           width: '210mm',
           maxWidth: '100%',
           background: '#FFFFFF',
-          padding: '28px 24px',
+          padding: '22px 22px',
           fontFamily: "'Be Vietnam Pro', 'Inter', Arial, sans-serif",
-          fontSize: '10pt',
-          lineHeight: 1.55,
+          fontSize: '9.5pt',
+          lineHeight: 1.5,
           color: '#000000',
           boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
           borderRadius: '8px',
@@ -37,18 +37,18 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
         }}
       >
       {/* ─── Header ─── */}
-      <div style={{ marginBottom: 18 }}>
+      <div style={{ marginBottom: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <h1 style={{ fontSize: '22pt', fontWeight: 700, color: '#000000', margin: 0, lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: '20pt', fontWeight: 700, color: '#000000', margin: 0, lineHeight: 1.2 }}>
             {personalInfo.fullName || 'Họ và tên'}
           </h1>
           {displayRole && (
-            <span style={{ fontSize: '11pt', fontWeight: 700, color: '#333333' }}>
+            <span style={{ fontSize: '10.5pt', fontWeight: 700, color: '#333333' }}>
               {displayRole}
             </span>
           )}
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: 10, paddingBottom: 6, fontSize: '9.8pt', color: '#333333' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginTop: 8, paddingBottom: 4, fontSize: '9.5pt', color: '#333333' }}>
           {personalInfo.email && (
             <span><strong>Email:</strong> {personalInfo.email}</span>
           )}
@@ -60,14 +60,14 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
           )}
         </div>
         {/* Đường kẻ phân cách Header */}
-        <div style={{ height: '2px', background: '#000000', marginTop: 8, width: '100%' }} />
+        <div style={{ height: '2px', background: '#000000', marginTop: 6, width: '100%' }} />
       </div>
 
       {/* ─── 1. Tóm tắt Profile ─── */}
       {summary && (
-        <div style={{ marginBottom: 18 }}>
+        <div style={{ marginBottom: 14 }}>
           <SectionHeader title="TÓM TẮT PROFILE" />
-          <p style={{ fontSize: '9.8pt', color: '#1A1A1A', margin: 0, lineHeight: 1.6, textAlign: 'justify' }}>
+          <p style={{ fontSize: '9.5pt', color: '#1A1A1A', margin: 0, lineHeight: 1.55, textAlign: 'justify' }}>
             {summary}
           </p>
         </div>
@@ -75,25 +75,25 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
 
       {/* ─── 2. Học vấn ─── */}
       {education && (education.school || education.major) && (
-        <div style={{ marginBottom: 18 }}>
+        <div style={{ marginBottom: 14 }}>
           <SectionHeader title="HỌC VẤN" />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <div>
-              <h3 style={{ fontSize: '10.5pt', fontWeight: 700, color: '#000000', margin: 0 }}>
+              <h3 style={{ fontSize: '10pt', fontWeight: 700, color: '#000000', margin: 0 }}>
                 {education.school || 'Trường Đại học Tây Đô'}
               </h3>
-              <p style={{ fontSize: '9.8pt', color: '#333333', margin: '3px 0 0 0' }}>
+              <p style={{ fontSize: '9.5pt', color: '#333333', margin: '2px 0 0 0' }}>
                 Ngành: <span style={{ fontWeight: 600, color: '#000000' }}>{education.major}</span>
               </p>
             </div>
             <div style={{ textAlign: 'right' }}>
               {education.gpa && (
-                <span style={{ fontSize: '9.8pt', fontWeight: 700, color: '#000000' }}>
+                <span style={{ fontSize: '9.5pt', fontWeight: 700, color: '#000000' }}>
                   GPA: {education.gpa}
                 </span>
               )}
               {(education.duration || education.graduationYear) && (
-                <p style={{ fontSize: '9.2pt', color: '#555555', margin: '3px 0 0 0' }}>
+                <p style={{ fontSize: '9pt', color: '#555555', margin: '2px 0 0 0' }}>
                   {education.duration || education.graduationYear}
                 </p>
               )}
@@ -104,16 +104,16 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
 
       {/* ─── 3. Kỹ năng chuyên môn ─── */}
       {(technicalSkills.length > 0 || softSkills.length > 0) && (
-        <div style={{ marginBottom: 18 }}>
+        <div style={{ marginBottom: 14 }}>
           <SectionHeader title="KỸ NĂNG CHUYÊN MÔN" />
           {technicalSkills.length > 0 && (
-            <p style={{ fontSize: '9.8pt', color: '#1A1A1A', margin: '0 0 6px 0', lineHeight: 1.55 }}>
+            <p style={{ fontSize: '9.5pt', color: '#1A1A1A', margin: '0 0 4px 0', lineHeight: 1.5 }}>
               <strong style={{ color: '#000000' }}>Kỹ thuật:</strong>{' '}
               {technicalSkills.map(s => (typeof s === 'string' ? s : s.name)).join('  •  ')}
             </p>
           )}
           {softSkills.length > 0 && (
-            <p style={{ fontSize: '9.8pt', color: '#333333', margin: 0, lineHeight: 1.55 }}>
+            <p style={{ fontSize: '9.5pt', color: '#333333', margin: 0, lineHeight: 1.5 }}>
               <strong style={{ color: '#000000' }}>Kỹ năng mềm:</strong>{' '}
               {softSkills.join('  •  ')}
             </p>
@@ -123,16 +123,16 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
 
       {/* ─── 4. Dự án tiêu biểu ─── */}
       {projects.length > 0 && (
-        <div style={{ marginBottom: 18 }}>
+        <div style={{ marginBottom: 14 }}>
           <SectionHeader title="DỰ ÁN TIÊU BIỂU" />
           {projects.map((proj, idx) => (
-            <div key={idx} style={{ marginBottom: idx < projects.length - 1 ? 16 : 0 }}>
+            <div key={idx} style={{ marginBottom: idx < projects.length - 1 ? 12 : 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <h3 style={{ fontSize: '10.5pt', fontWeight: 700, color: '#000000', margin: 0, flex: 1 }}>
+                <h3 style={{ fontSize: '10pt', fontWeight: 700, color: '#000000', margin: 0, flex: 1 }}>
                   {proj.name}
                 </h3>
 
-                <div style={{ display: 'flex', gap: 12, fontSize: '9.2pt', whiteSpace: 'nowrap', flexShrink: 0, marginLeft: 16 }}>
+                <div style={{ display: 'flex', gap: 10, fontSize: '9pt', whiteSpace: 'nowrap', flexShrink: 0, marginLeft: 14 }}>
                   {(proj.gitUrl || proj.git_url) && (
                     <a
                       href={proj.gitUrl || proj.git_url}
@@ -157,25 +157,25 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
               </div>
 
               {proj.role && (
-                <p style={{ fontSize: '9.2pt', color: '#333333', margin: '2px 0 0 0' }}>
+                <p style={{ fontSize: '9pt', color: '#333333', margin: '2px 0 0 0' }}>
                   <strong style={{ color: '#000000' }}>Vai trò:</strong> {proj.role}
                 </p>
               )}
 
               {proj.technologies && (
-                <p style={{ fontSize: '9.2pt', color: '#222222', margin: '2px 0 4px 0' }}>
+                <p style={{ fontSize: '9pt', color: '#222222', margin: '2px 0 3px 0' }}>
                   <strong style={{ color: '#000000' }}>Công nghệ:</strong> {proj.technologies}
                 </p>
               )}
 
               {proj.highlights && proj.highlights.length > 0 ? (
-                <ul style={{ margin: '3px 0 0 18px', padding: 0, fontSize: '9.8pt', color: '#1A1A1A', lineHeight: 1.55 }}>
+                <ul style={{ margin: '2px 0 0 16px', padding: 0, fontSize: '9.4pt', color: '#1A1A1A', lineHeight: 1.5 }}>
                   {proj.highlights.map((hl, hIdx) => (
-                    <li key={hIdx} style={{ marginBottom: 4 }}>{hl}</li>
+                    <li key={hIdx} style={{ marginBottom: 3 }}>{hl}</li>
                   ))}
                 </ul>
               ) : proj.description ? (
-                <p style={{ fontSize: '9.8pt', color: '#1A1A1A', margin: '3px 0 0 0', lineHeight: 1.55 }}>
+                <p style={{ fontSize: '9.4pt', color: '#1A1A1A', margin: '2px 0 0 0', lineHeight: 1.5 }}>
                   {proj.description}
                 </p>
               ) : null}
@@ -189,7 +189,7 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
         <div>
           <SectionHeader title="CHỨNG CHỈ" />
           {certificates.map((cert, idx) => (
-            <p key={idx} style={{ fontSize: '9.8pt', color: '#000000', margin: '0 0 4px 0', lineHeight: 1.55 }}>
+            <p key={idx} style={{ fontSize: '9.5pt', color: '#000000', margin: '0 0 3px 0', lineHeight: 1.5 }}>
               • <strong style={{ color: '#000000' }}>{cert.name}</strong>
               {cert.issuer && <span style={{ color: '#333333' }}> — {cert.issuer}</span>}
               {cert.year && <span style={{ color: '#555555' }}> ({cert.year})</span>}
@@ -202,19 +202,19 @@ export default function CVPreview({ cvData, template = 'modern', targetRole = ''
   );
 }
 
-// Sub-component cho Tiêu đề Mục + Đường kẻ ngang riêng biệt (Có paddingBottom 6px tạo khoảng trống rõ ràng 100%)
+// Sub-component cho Tiêu đề Mục + Đường kẻ ngang riêng biệt (Có paddingBottom 4px tạo khoảng trống rõ ràng 100%)
 function SectionHeader({ title }) {
   return (
-    <div style={{ marginTop: '12px', marginBottom: '10px' }}>
+    <div style={{ marginTop: '8px', marginBottom: '8px' }}>
       <h2 style={{
-        fontSize: '11pt',
+        fontSize: '10.5pt',
         fontWeight: 700,
         color: '#000000',
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
         margin: 0,
-        paddingBottom: '6px', // Ép buộc khoảng trắng 6px bên dưới chữ trước khi tới đường kẻ
-        lineHeight: 1.3,
+        paddingBottom: '4px',
+        lineHeight: 1.25,
         display: 'block',
       }}>
         {title}

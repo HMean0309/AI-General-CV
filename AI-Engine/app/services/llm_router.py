@@ -25,6 +25,7 @@ from app.schemas.response import (
     Education,
     Skills,
     ProjectOutput,
+    CertificateOutput,
     ResponseMeta,
 )
 
@@ -179,16 +180,79 @@ async def call_gemini(
         return None, f"Gemini error: {error_msg}"
 
 
-def generate_mock_data(full_name: str, major: str, gpa: str) -> dict:
+def generate_mock_data(
+    full_name: str,
+    major: str,
+    gpa: str,
+    projects: Optional[list] = None,
+    certificates: Optional[list] = None,
+) -> dict:
     """
     Generate mock CV data as the last resort fallback.
     Used when all LLM providers are unavailable.
+    Preserves real student projects and certificates if provided.
     """
     logger.info("llm_router.using_mock_data", full_name=full_name)
 
-    # Create a reasonable mock based on available info
     first_name = full_name.split()[-1] if full_name else "Student"
     email_name = full_name.lower().replace(" ", ".") if full_name else "student"
+
+    # Build mock projects from student's real projects if available
+    mock_projects = []
+    if projects:
+        for p in projects[:2]:
+            # Convert request project model or dict to ProjectOutput
+            p_name = getattr(p, "name", None) or (p.get("name") if isinstance(p, dict) else "Dự án CNTT")
+            p_role = getattr(p, "role", None) or (p.get("role") if isinstance(p, dict) else "Lập trình viên")
+            p_tech = getattr(p, "technologies", None) or (p.get("technologies") if isinstance(p, dict) else "")
+            p_desc = getattr(p, "description", None) or (p.get("description") if isinstance(p, dict) else "")
+            p_git = getattr(p, "git_url", None) or (p.get("git_url") if isinstance(p, dict) else None)
+            p_demo = getattr(p, "demo_url", None) or (p.get("demo_url") if isinstance(p, dict) else None)
+
+            mock_projects.append(
+                ProjectOutput(
+                    name=p_name,
+                    role=p_role,
+                    technologies=p_tech,
+                    description=p_desc,
+                    gitUrl=p_git,
+                    demoUrl=p_demo,
+                    highlights=[
+                        f"Phát triển thành công hệ thống {p_name} ứng dụng công nghệ {p_tech}.",
+                        "Áp dụng nguyên lý Clean Architecture và viết unit test đảm bảo chất lượng phần mềm.",
+                        "Tối ưu hóa hiệu năng cơ sở dữ liệu và cải thiện thời gian phản hồi API.",
+                        "Tích hợp các dịch vụ và thiết lập quy trình kiểm thử tự động với Git.",
+                    ],
+                )
+            )
+
+    if not mock_projects:
+        mock_projects = [
+            ProjectOutput(
+                name="Hệ thống Backend E-Commerce Microservices",
+                role="Lead Backend Developer",
+                technologies="Node.js, Express.js, SQL Server, Docker, Git",
+                description="Xây dựng hệ thống RESTful API cho thương mại điện tử",
+                highlights=[
+                    "Designed and implemented RESTful API using Node.js, Express.js and SQL Server",
+                    "Architected system using Clean Architecture and SOLID principles",
+                    "Optimized database queries and indexing for SQL Server reducing latency by 35%",
+                    "Containerized services with Docker and set up automated CI/CD pipeline",
+                ],
+            )
+        ]
+
+    # Build mock certificates from student's real certificates if available
+    mock_certs = []
+    if certificates:
+        for c in certificates[:4]:
+            c_name = getattr(c, "name", None) or (c.get("name") if isinstance(c, dict) else "")
+            c_issuer = getattr(c, "issuer", None) or (c.get("issuer") if isinstance(c, dict) else "")
+            c_year = getattr(c, "year", None) or (c.get("year") if isinstance(c, dict) else "")
+            if c_name:
+                mock_certs.append(
+                    CertificateOutput(name=c_name, issuer=c_issuer, year=c_year)
+                )
 
     mock_cv = CvData(
         personalInfo=PersonalInfo(
@@ -200,30 +264,16 @@ def generate_mock_data(full_name: str, major: str, gpa: str) -> dict:
             linkedin=None,
         ),
         summary=(
-            f"Motivated {major} student with a GPA of {gpa}, "
-            f"seeking opportunities to apply academic knowledge in a professional setting. "
-            f"Eager to learn and contribute to team success."
+            f"Sinh viên ngành {major} với GPA {gpa}, năng nổ và giàu nhiệt huyết. "
+            f"Sẵn sàng học hỏi, áp dụng kiến thức chuyên môn và đóng góp tối đa cho sự phát triển của công ty."
         ),
         skills=Skills(
-            technical=["Node.js", "Express.js", "SQL Server", "Clean Architecture", "Docker", "Git", "REST API"],
+            technical=["Python", "Node.js", "SQL Server", "Docker", "Git", "REST API"],
             soft=["Teamwork", "Problem Solving", "Continuous Learning"],
         ),
         relevantCoursework=[],
-        projects=[
-            ProjectOutput(
-                name="Hệ thống Backend E-Commerce Microservices",
-                role="Lead Backend Developer",
-                technologies="Node.js, Express.js, SQL Server, Docker, Git",
-                description="Xây dựng hệ thống RESTful API cho thương mại điện tử",
-                highlights=[
-                    "Designed and implemented RESTful API using Node.js, Express.js and SQL Server",
-                    "Architected system using Clean Architecture and SOLID principles",
-                    "Optimized database queries and indexing for SQL Server reducing latency by 35%",
-                    "Containerized services with Docker and set up automated CI/CD pipeline"
-                ]
-            )
-        ],
-        certificates=[],
+        projects=mock_projects,
+        certificates=mock_certs,
         education=Education(
             school="Trường Đại học Tây Đô",
             major=major,
@@ -242,6 +292,8 @@ async def route_llm_call(
     full_name: str,
     major: str,
     gpa: str,
+    projects: Optional[list] = None,
+    certificates: Optional[list] = None,
 ) -> Tuple[dict, str, bool, list]:
     """
     Main LLM routing function with failover chain.
@@ -275,5 +327,7 @@ async def route_llm_call(
         request_id=request_id,
     )
     warnings.append("Hệ thống AI tạm thời gián đoạn, đây là dữ liệu mẫu.")
-    mock_data = generate_mock_data(full_name, major, gpa)
+    mock_data = generate_mock_data(
+        full_name, major, gpa, projects=projects, certificates=certificates
+    )
     return mock_data, "mock", True, warnings

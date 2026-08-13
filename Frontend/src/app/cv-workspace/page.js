@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import CVPreview from '@/components/cv/CVPreview';
 import MatchScoreCircle from '@/components/cv/MatchScoreCircle';
+import ScoreBreakdownCard from '@/components/cv/ScoreBreakdownCard';
 import useCvStore from '@/stores/cvStore';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -95,6 +96,13 @@ export default function CvWorkspacePage() {
     } finally {
       setIsSaving(false);
     }
+  }
+
+  // Xử lý làm mới workspace và xóa file đính kèm
+  function handleResetWorkspace() {
+    setAttachedFile(null);
+    setFileParseError('');
+    store.resetWorkspace();
   }
 
   // Xử lý gửi JD để AI phân tích
@@ -561,6 +569,11 @@ export default function CvWorkspacePage() {
                   </p>
                 </div>
 
+                {/* Phân tích đa chiều 4 trụ cột */}
+                {store.scoreBreakdown && (
+                  <ScoreBreakdownCard scoreBreakdown={store.scoreBreakdown} />
+                )}
+
                 {store.missingKeywords.length > 0 && (
                   <div
                     className="card"
@@ -643,7 +656,7 @@ export default function CvWorkspacePage() {
 
                 <button
                   className="btn btn-outline"
-                  onClick={() => store.resetWorkspace()}
+                  onClick={handleResetWorkspace}
                   style={{ width: '100%', fontSize: '13px' }}
                 >
                   <RefreshCw size={14} />

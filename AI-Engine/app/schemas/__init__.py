@@ -1,6 +1,6 @@
 # Pydantic v2 schemas for request/response models
 from app.schemas.request import GenerateCvRequest, StudentAcademicContext
-from app.schemas.response import GenerateCvResponse, CvData, ResponseMeta
+from app.schemas.response import GenerateCvResponse, CvData, ResponseMeta, ScoreBreakdown
 
 __all__ = [
     "GenerateCvRequest",
@@ -8,4 +8,5 @@ __all__ = [
     "GenerateCvResponse",
     "CvData",
     "ResponseMeta",
+    "ScoreBreakdown",
 ]

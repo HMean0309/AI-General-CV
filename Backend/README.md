@@ -35,7 +35,6 @@ Nếu chưa thấy dòng nào bắt đầu bằng `8.0.x`, tải SDK .NET 8 tạ
 
 2. Cài package & chạy:
 ```bash
-cd TayDoApi
 dotnet restore
 dotnet run
 ```
@@ -126,7 +125,7 @@ protected override string[]? ReadRoles => Roles.AdminAndTeacher;
 
 ## Lưu ý quan trọng khác
 
-- 35 bảng còn lại chỉ map cột (không khai báo navigation property/quan hệ FK ở tầng EF Core) để tránh vòng lặp serialize JSON. Cột khóa ngoại (`StudentId`, `SubjectId`,...) vẫn còn nguyên nếu cần join thủ công hoặc bổ sung navigation sau.
+- 36 bảng còn lại chỉ map cột (không khai báo navigation property/quan hệ FK ở tầng EF Core) để tránh vòng lặp serialize JSON. Cột khóa ngoại (`StudentId`, `SubjectId`,...) vẫn còn nguyên nếu cần join thủ công hoặc bổ sung navigation sau.
 - CORS đang mở `AllowAny` — nên giới hạn origin cụ thể khi deploy.
 - Hiện tất cả endpoint yêu cầu "đã đăng nhập" (`[Authorize]`) và đã phân quyền theo Role — xem mục "Phân quyền theo Role" ở trên.
 - Đây là code sinh tự động từ schema — nếu DB có ràng buộc nghiệp vụ khác (unique, check constraint...) cần rà lại cho khớp.

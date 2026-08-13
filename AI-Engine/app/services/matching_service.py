@@ -181,37 +181,102 @@ def extract_jd_keywords(jd_text: str) -> List[str]:
 def calculate_match(
     student_skills: List[str],
     jd_keywords: List[str],
-) -> Tuple[int, List[str]]:
+    academic_context=None,
+) -> Tuple[int, List[str], dict]:
     """
-    Calculate match score between student skills and JD requirements
-    using semantic embeddings.
+    Multi-Dimensional Scoring Model — Tính điểm CV đa chiều.
+
+    4 Trụ cột:
+    - Technical Skill Score (35%): Kỹ năng kỹ thuật khớp JD
+    - Project Relevance Score (30%): Độ phù hợp đồ án
+    - Academic & PLO Score (20%): Điểm học tập & PLO liên quan
+    - Soft Skill & Cert Score (15%): Chứng chỉ & kỹ năng mềm
 
     Returns:
-        Tuple of (matchScore 0-100, list of missing keywords)
+        Tuple of (matchScore 0-100, missing keywords list, scoreBreakdown dict)
     """
     if not jd_keywords:
-        return 0, []
+        return 0, [], {
+            "technicalSkillScore": 0,
+            "projectRelevanceScore": 0,
+            "academicPloScore": 0,
+            "softSkillCertScore": 0,
+        }
 
+    # ── Pillar 1: Technical Skill Score (35%) ──
+    tech_score, missing_keywords = _calculate_technical_skill_score(
+        student_skills, jd_keywords
+    )
+
+    # ── Pillar 2: Project Relevance Score (30%) ──
+    project_score = _calculate_project_relevance_score(
+        academic_context, jd_keywords
+    )
+
+    # ── Pillar 3: Academic & PLO Score (20%) ──
+    academic_score = _calculate_academic_plo_score(
+        academic_context, jd_keywords
+    )
+
+    # ── Pillar 4: Soft Skill & Cert Score (15%) ──
+    cert_score = _calculate_soft_skill_cert_score(
+        academic_context, jd_keywords
+    )
+
+    # ── Weighted Total ──
+    match_score = int(
+        tech_score * 0.35
+        + project_score * 0.30
+        + academic_score * 0.20
+        + cert_score * 0.15
+    )
+    match_score = min(100, max(0, match_score))
+
+    score_breakdown = {
+        "technicalSkillScore": tech_score,
+        "projectRelevanceScore": project_score,
+        "academicPloScore": academic_score,
+        "softSkillCertScore": cert_score,
+    }
+
+    logger.info(
+        "matching.multi_dimensional_score",
+        match_score=match_score,
+        technical=tech_score,
+        project=project_score,
+        academic=academic_score,
+        cert=cert_score,
+        missing=len(missing_keywords),
+    )
+
+    return match_score, missing_keywords, score_breakdown
+
+
+def _calculate_technical_skill_score(
+    student_skills: List[str],
+    jd_keywords: List[str],
+) -> Tuple[int, List[str]]:
+    """
+    Pillar 1: So khớp kỹ năng kỹ thuật sinh viên với từ khóa JD.
+    Dùng embedding semantic matching hoặc fallback fuzzy text.
+    """
     if not student_skills:
         return 0, jd_keywords
 
     # Check if embedding model is available
     if not embedding_service.is_model_loaded():
-        # Fallback to simple text matching
         return _fallback_text_match(student_skills, jd_keywords)
 
     try:
-        # Encode both sets of skills
         student_embeddings = embedding_service.encode_texts(student_skills)
         jd_embeddings = embedding_service.encode_texts(jd_keywords)
 
         if student_embeddings.size == 0 or jd_embeddings.size == 0:
             return 0, jd_keywords
 
-        # For each JD keyword, find the best matching student skill
         matched_count = 0
         missing_keywords = []
-        similarity_threshold = 0.55  # Minimum similarity to consider a match
+        similarity_threshold = 0.55
 
         for i, jd_kw in enumerate(jd_keywords):
             jd_vec = jd_embeddings[i]
@@ -225,22 +290,156 @@ def calculate_match(
             else:
                 missing_keywords.append(jd_kw)
 
-        match_score = int((matched_count / len(jd_keywords)) * 100)
-        match_score = min(100, max(0, match_score))
-
-        logger.info(
-            "matching.score_calculated",
-            match_score=match_score,
-            total_jd_keywords=len(jd_keywords),
-            matched=matched_count,
-            missing=len(missing_keywords),
-        )
-
-        return match_score, missing_keywords
+        score = int((matched_count / len(jd_keywords)) * 100)
+        return min(100, max(0, score)), missing_keywords
 
     except Exception as e:
-        logger.error("matching.embedding_error", error=str(e))
+        logger.error("matching.technical_embedding_error", error=str(e))
         return _fallback_text_match(student_skills, jd_keywords)
+
+
+def _calculate_project_relevance_score(
+    academic_context,
+    jd_keywords: List[str],
+) -> int:
+    """
+    Pillar 2: Đánh giá mức độ phù hợp đồ án so với JD.
+    Kiểm tra tech stack + từ khóa mô tả dự án khớp với từ khóa JD.
+    """
+    if not academic_context or not academic_context.projects:
+        return 0
+
+    if not jd_keywords:
+        return 0
+
+    jd_lower = {kw.lower() for kw in jd_keywords}
+    project_scores = []
+
+    for project in academic_context.projects:
+        matched = 0
+        total_checks = len(jd_lower)
+
+        if total_checks == 0:
+            continue
+
+        # Check technologies
+        tech_text = (project.technologies or "").lower()
+        desc_text = (project.description or "").lower()
+        name_text = (project.name or "").lower()
+        combined_text = f"{tech_text} {desc_text} {name_text}"
+
+        for kw in jd_lower:
+            kw_l = kw.lower()
+            if kw_l in combined_text:
+                matched += 1
+            elif any(
+                fuzz.token_sort_ratio(kw_l, word) >= 75
+                for word in combined_text.split()
+                if len(word) > 2
+            ):
+                matched += 1
+
+        project_score = (matched / total_checks) * 100 if total_checks > 0 else 0
+        project_scores.append(project_score)
+
+    if not project_scores:
+        return 0
+
+    # Lấy điểm trung bình 2 đồ án tốt nhất (hoặc ít hơn nếu chỉ có 1)
+    project_scores.sort(reverse=True)
+    top_scores = project_scores[:2]
+    avg_score = sum(top_scores) / len(top_scores)
+
+    return min(100, max(0, int(avg_score)))
+
+
+def _calculate_academic_plo_score(
+    academic_context,
+    jd_keywords: List[str],
+) -> int:
+    """
+    Pillar 3: Tính điểm học tập các môn liên quan & PLO.
+    Lọc môn học có kỹ năng liên quan đến JD, tính điểm trung bình.
+    """
+    if not academic_context or not academic_context.coursework:
+        return 0
+
+    jd_lower = {kw.lower() for kw in jd_keywords}
+    relevant_scores = []
+
+    for course in academic_context.coursework:
+        # Lấy skills tương ứng cho môn học qua skill map
+        course_skills = fuzzy_lookup_skills(course.subject_name)
+        course_skills_lower = {s.lower() for s in course_skills}
+
+        # Kiểm tra skill map có overlap với JD keywords không
+        is_relevant = bool(course_skills_lower & jd_lower)
+
+        if not is_relevant:
+            # Fallback: kiểm tra tên môn học có chứa từ khóa JD
+            course_name_lower = course.subject_name.lower()
+            is_relevant = any(
+                kw.lower() in course_name_lower
+                for kw in jd_keywords
+            )
+
+        if is_relevant:
+            # Quy đổi điểm thang 10 → thang 100
+            relevant_scores.append(min(100, course.score * 10))
+
+    if not relevant_scores:
+        # Không tìm thấy môn liên quan → dùng GPA tổng thể * 10 làm baseline
+        all_scores = [c.score for c in academic_context.coursework]
+        if all_scores:
+            avg_gpa = sum(all_scores) / len(all_scores)
+            return min(100, max(0, int(avg_gpa * 10 * 0.6)))  # Phạt 40% vì không specific
+        return 0
+
+    avg = sum(relevant_scores) / len(relevant_scores)
+    return min(100, max(0, int(avg)))
+
+
+def _calculate_soft_skill_cert_score(
+    academic_context,
+    jd_keywords: List[str],
+) -> int:
+    """
+    Pillar 4: Đánh giá chứng chỉ & kỹ năng mềm phù hợp JD.
+    """
+    if not academic_context:
+        return 0
+
+    score = 0
+    certs = academic_context.certificates or []
+
+    if not certs:
+        return 30  # Baseline: có nền tảng nhưng chưa có chứng chỉ cụ thể
+
+    jd_lower = {kw.lower() for kw in jd_keywords}
+    jd_text = " ".join(jd_keywords).lower()
+
+    relevant_cert_count = 0
+    for cert in certs:
+        cert_text = f"{cert.name} {cert.issuer}".lower()
+        # Kiểm tra chứng chỉ có liên quan đến IT/JD không
+        it_keywords = {
+            "aws", "azure", "google", "cisco", "microsoft", "oracle",
+            "comptia", "linux", "python", "java", "node", "react",
+            "docker", "kubernetes", "scrum", "agile", "pmp", "itil",
+            "ielts", "toeic", "toefl", "jlpt", "topik",
+        }
+        is_it_cert = any(kw in cert_text for kw in it_keywords)
+        is_jd_relevant = any(kw in cert_text for kw in jd_lower)
+
+        if is_jd_relevant:
+            relevant_cert_count += 2  # Trực tiếp liên quan JD: trọng số x2
+        elif is_it_cert:
+            relevant_cert_count += 1  # IT cert chung
+
+    # Tính điểm: mỗi cert liên quan cộng 20 điểm, tối đa 100
+    score = min(100, 30 + relevant_cert_count * 20)
+
+    return max(0, score)
 
 
 def _fallback_text_match(
@@ -273,3 +472,4 @@ def _fallback_text_match(
 
     match_score = int((matched_count / len(jd_keywords)) * 100) if jd_keywords else 0
     return min(100, max(0, match_score)), missing_keywords
+

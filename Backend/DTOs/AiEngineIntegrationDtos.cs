@@ -89,6 +89,21 @@ namespace TayDoApi.DTOs
     // ==========================================
     // RESPONSE DTOs (FastAPI -> C# -> Frontend)
     // ==========================================
+    public class ScoreBreakdownDto
+    {
+        [JsonPropertyName("technicalSkillScore")]
+        public int TechnicalSkillScore { get; set; }
+
+        [JsonPropertyName("projectRelevanceScore")]
+        public int ProjectRelevanceScore { get; set; }
+
+        [JsonPropertyName("academicPloScore")]
+        public int AcademicPloScore { get; set; }
+
+        [JsonPropertyName("softSkillCertScore")]
+        public int SoftSkillCertScore { get; set; }
+    }
+
     public class AiEngineCvResponseDto
     {
         [JsonPropertyName("matchScore")]
@@ -99,6 +114,9 @@ namespace TayDoApi.DTOs
 
         [JsonPropertyName("cvData")]
         public CvDataDto CvData { get; set; } = new();
+
+        [JsonPropertyName("scoreBreakdown")]
+        public ScoreBreakdownDto? ScoreBreakdown { get; set; }
 
         [JsonPropertyName("warnings")]
         public List<string> Warnings { get; set; } = new();
