@@ -104,7 +104,7 @@ AIGeneralCV/
 Hệ thống sử dụng Cơ sở dữ liệu SQL Server có tên `TayDoV2`. Bạn có thể khởi tạo theo **2 cách**:
 
 #### 🔹 Cách 1: Restore từ File Backup `.bak` (Khuyên dùng - Đầy đủ dữ liệu test nhất)
-1. Tải file backup database `.bak` [tại đây (Google Drive)](https://drive.google.com/file/d/1_WfH6IcmPmYo91JHE_73yPfSAYaOm7Mf/view?usp=sharing).
+1. Tải file backup database `.bak` [tại đây (Google Drive)](https://drive.google.com/file/d/1-sioh20iW0sA_MPt69hO_R_1s6mjBVoz/view?usp=sharing).
 2. Mở **SQL Server Management Studio (SSMS)**.
 3. Chuột phải vào thư mục **Databases** ➔ Chọn **Restore Database...**
 4. Tại mục *Source*, chọn **Device** ➔ Bấm nút `...` ➔ Bấm **Add** và chọn file `TayDoV2.bak` vừa tải về.
